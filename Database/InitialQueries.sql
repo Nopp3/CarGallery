@@ -42,3 +42,20 @@ CREATE TABLE Cars (
 	horsePower INT,
 	imagePath VARCHAR(50)
 );
+
+ALTER TABLE Users
+	ADD FOREIGN KEY (role_id)
+	REFERENCES Roles (id);
+
+ALTER TABLE Cars
+	ADD FOREIGN KEY (user_id)
+	REFERENCES Users (id);
+ALTER TABLE Cars
+	ADD FOREIGN KEY (fuel_id)
+	REFERENCES Fuels (id);
+ALTER TABLE Cars
+	ADD FOREIGN KEY (body_id)
+	REFERENCES Bodies (id);
+ALTER TABLE Cars
+	ADD FOREIGN KEY (brand_id)
+	REFERENCES Brands (id);
