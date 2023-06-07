@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { Login } from "../../models/user.model";
 import { UserService } from "../../services/user/user.service";
 import { SessionService } from "../../services/session/session.service";
+import {SharedService} from "../../services/shared/shared.service";
 
 @Component({
   selector: 'app-login',
@@ -14,16 +15,16 @@ export class LoginComponent {
     username: '',
     password: ''
   }
-  constructor(private userService: UserService,
-              private router: Router,
-              private sessionService: SessionService) { }
+  constructor(private userService: UserService, private router: Router,
+              private sharedService : SharedService) { }
 
   loginUser(){
-    this.sessionService.clear()
+    SessionService.clear()
     this.userService.loginUser(this.loginRequest)
       .subscribe({
         next: (guid) => {
-          this.sessionService.set("LoggedUser", guid)
+          SessionService.set("LoggedUser", guid)
+          this.sharedService.emitRefreshEvent()
           this.router.navigate(['home'])
         },
         error: (response) => {
