@@ -12,7 +12,7 @@ namespace CarGalleryAPI.Controllers
         private readonly DatabaseContext _dbContext;
         public CarsController(DatabaseContext dbContext) => _dbContext = dbContext;
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<IActionResult> GetCars()
         {
             List<Car> cars = await _dbContext.Cars.ToListAsync();
@@ -20,8 +20,8 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetUserCars([FromRoute] Guid id)
+        //[Route("{id:Guid}")]
+        public async Task<IActionResult> GetUserCars([FromQuery] Guid id)
         {
             List<Car> cars = await _dbContext.Cars.ToListAsync();
             if (cars.Where(x => x.user_id == id).Any())
@@ -32,8 +32,8 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet]
-        [Route("body/{body}")]
-        public async Task<IActionResult> GetCarsByBody([FromRoute] string body)
+        [Route("body")]
+        public async Task<IActionResult> GetCarsByBody([FromQuery] string body)
         {
             Console.WriteLine(body);
 
@@ -47,8 +47,8 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet]
-        [Route("brand/{brand}")]
-        public async Task<IActionResult> GetCarsByBrand([FromRoute] string brand)
+        [Route("brand")]
+        public async Task<IActionResult> GetCarsByBrand([FromQuery] string brand)
         {
             Brand? brands = await _dbContext.Brands.FirstOrDefaultAsync(x => x.name == brand);
             List<Car> cars = await _dbContext.Cars.ToListAsync();
@@ -92,8 +92,8 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> DeleteCar([FromRoute] Guid id)
+        //[Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteCar([FromQuery] Guid id)
         {
             var car = await _dbContext.Cars.FindAsync(id);
 

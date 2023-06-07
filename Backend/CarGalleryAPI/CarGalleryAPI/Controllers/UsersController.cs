@@ -14,8 +14,8 @@ namespace CarGalleryAPI.Controllers
         public UsersController(DatabaseContext dbContext) => _dbContext = dbContext;
 
         [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetUser([FromRoute] Guid id)
+        //[Route("{id:Guid}")]
+        public async Task<IActionResult> GetUser([FromQuery(Name = "id")] Guid id)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.id == id);
 
@@ -25,17 +25,17 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] string username, string password)
+        public async Task<IActionResult> LoginUser([FromBody] Login login)
         {
-            if (_dbContext.Users.Where(x => x.username == username).Any())
+            if (_dbContext.Users.Where(x => x.username == login.username).Any())
             {
-                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == username);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == login.username);
 
-                if (user.password == Hash.Encrypt(password))
-                    return Ok(user);
+                if (user.password == Hash.Encrypt(login.password))
+                    return Ok(user.id);
                 else return BadRequest("Invalid password");
             }
-            return NotFound($"Can't find user: {username}");
+            return NotFound($"Can't find user: {login.username}");
         }
 
         [HttpPost]

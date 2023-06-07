@@ -25,6 +25,10 @@ namespace CarGalleryAPI.Controllers
             Brand brand = new Brand();
             brand.name = name;
 
+            int currentBiggestId = await _dbContext.Brands.MaxAsync(x => x.id);
+
+            brand.id = currentBiggestId+1;
+
             await _dbContext.Brands.AddAsync(brand);
             await _dbContext.SaveChangesAsync();
 
