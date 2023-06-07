@@ -1,0 +1,22 @@
+<div class="container my-5">
+  <h1 class="mb-3">Login</h1>
+
+  <div class="row">
+    <div class="col-6">
+      <form #form="ngForm" (ngSubmit)="loginUser()">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username"
+                 name='username' [(ngModel)] = "loginRequest.username">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password"
+                 name='password' [(ngModel)]="loginRequest.password">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="button" class="btn btn-primary m-lg-2" routerLink="signIn">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
