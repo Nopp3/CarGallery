@@ -7,20 +7,16 @@ import {AllCarsComponent} from "../components/all-cars/all-cars.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     component: LoginComponent
   },
   {
-    path: 'home',
+    path: '',
     component: HomeComponent
   },
   {
     path: 'all',
     component: AllCarsComponent
-  },
-  {
-    path: 'logout',
-    component: LoginComponent //To do
   },
   {
     path: 'signIn',

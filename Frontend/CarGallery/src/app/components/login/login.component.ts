@@ -25,11 +25,17 @@ export class LoginComponent {
         next: (guid) => {
           SessionService.set("LoggedUser", guid)
           this.sharedService.emitRefreshEvent()
-          this.router.navigate(['home'])
+          this.router.navigate([''])
         },
         error: (response) => {
           console.log(response.statusText)
         }
       })
+  }
+
+  ngOnInit(){
+    if (SessionService.get("LoggedUser") != null){
+      this.router.navigate([''])
+    }
   }
 }
