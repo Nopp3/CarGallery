@@ -1,3 +1,7 @@
+<div *ngIf="displayMessageBox" class="message-box">
+  <p>{{ messageBoxText }}</p>
+</div>
+
 <div class="container my-5">
   <h1 class="mb-3">Login</h1>
 
@@ -15,7 +19,7 @@
                  name='password' [(ngModel)]="loginRequest.password">
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
-        <button type="button" class="btn btn-primary m-lg-2" routerLink="signIn">Sign in</button>
+        <button type="button" class="btn btn-primary m-lg-2" routerLink="/signIn">Sign in</button>
       </form>
     </div>
   </div>
