@@ -12,9 +12,10 @@ export class UserService {
   baseApiUrl: string = environment.baseApiUrl;
   constructor(private http: HttpClient) { }
 
-  testGet(userGuid : string) : Observable<User>{
+  getUser(userGuid : string) : Observable<User>{
     return this.http.get<User>(this.baseApiUrl+'/api/Users/?id=' + userGuid)
   }
+
   loginUser(loginRequest: Login) : Observable<User>{
     return this.http.post<User>(this.baseApiUrl + '/api/Users/login', loginRequest)
   }

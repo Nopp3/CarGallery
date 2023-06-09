@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RoutingModule } from "./routing/routing.module";
+import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { LoginComponent } from "./components/login/login.component";
-import { RoutingModule } from "./routing/routing.module";
-import { FormsModule } from "@angular/forms";
 import { HomeComponent } from "./components/home/home.component";
 import { AllCarsComponent } from "./components/all-cars/all-cars.component";
-import { HttpClientModule } from "@angular/common/http";
+import { SignupComponent } from "./components/signup/signup.component";
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { HttpClientModule } from "@angular/common/http";
     NavbarComponent,
     LoginComponent,
     HomeComponent,
-    AllCarsComponent
+    AllCarsComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

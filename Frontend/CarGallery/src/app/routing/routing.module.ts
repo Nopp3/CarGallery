@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {LoginComponent} from "../components/login/login.component";
 import {HomeComponent} from "../components/home/home.component";
 import {AllCarsComponent} from "../components/all-cars/all-cars.component";
+import {SignupComponent} from "../components/signup/signup.component";
 
 const routes: Routes = [
   {
@@ -19,8 +20,8 @@ const routes: Routes = [
     component: AllCarsComponent
   },
   {
-    path: 'signIn',
-    component: LoginComponent //To do
+    path: 'signUp',
+    component: SignupComponent
   },
 ];
 @NgModule({
