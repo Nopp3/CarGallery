@@ -20,8 +20,8 @@ export class LoginComponent {
   constructor(private userService: UserService, private router: Router,
               private sharedService : SharedService) { }
   ngOnInit(){
-    if (SessionService.get("LoggedUser") != null){
-      this.router.navigate([''])
+    if (SessionService.get("ActiveUser") != null){
+      this.router.navigate(['home'])
     }
     this.displayMessageBox = false;
   }
@@ -30,9 +30,9 @@ export class LoginComponent {
     this.userService.loginUser(this.loginRequest)
       .subscribe({
         next: (guid) => {
-          SessionService.set("LoggedUser", guid)
+          SessionService.set("ActiveUser", guid)
           this.sharedService.emitRefreshEvent()
-          this.router.navigate([''])
+          this.router.navigate(['home'])
         },
         error: (response) => {
           if (this.loginRequest.username != '' &&

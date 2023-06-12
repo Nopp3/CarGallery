@@ -8,11 +8,11 @@ import { SharedService } from "./services/shared/shared.service";
 })
 export class AppComponent {
   title = 'CarGallery';
-  userLogged = SessionService.get("LoggedUser")
+  userLogged = SessionService.get("ActiveUser")
   constructor(private sharedService: SharedService) {}
   ngOnInit() {
     this.sharedService.refreshEvent.subscribe(() => {
-      this.userLogged = SessionService.get("LoggedUser")
+      this.userLogged = SessionService.get("ActiveUser")
     });
   }
 }

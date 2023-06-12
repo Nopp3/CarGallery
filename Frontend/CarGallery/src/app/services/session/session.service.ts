@@ -4,21 +4,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SessionService {
-  private static sessionData: any = {};
-
   static set(key: string, value: any): void {
-    this.sessionData[key] = value;
+    sessionStorage.setItem(key, value);
   }
-
   static get(key: string): any {
-    return this.sessionData[key];
+    return sessionStorage.getItem(key);
   }
-
   static remove(key: string): void {
-    delete this.sessionData[key];
+    sessionStorage.removeItem(key);
   }
-
   static clear(): void {
-    this.sessionData = {};
+    sessionStorage.clear();
   }
 }
