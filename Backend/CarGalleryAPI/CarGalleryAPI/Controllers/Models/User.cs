@@ -1,5 +1,4 @@
-﻿
-namespace CarGalleryAPI.Models
+﻿namespace CarGalleryAPI.Controllers.Models
 {
     public enum Roles
     {

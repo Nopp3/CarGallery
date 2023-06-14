@@ -1,7 +1,7 @@
-﻿using CarGalleryAPI.Models;
-using CarGalleryAPI.Data;
+﻿using CarGalleryAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using CarGalleryAPI.Controllers.Models;
 
 namespace CarGalleryAPI.Controllers
 {

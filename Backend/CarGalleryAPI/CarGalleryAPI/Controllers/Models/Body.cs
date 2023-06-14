@@ -1,4 +1,4 @@
-﻿namespace CarGalleryAPI.Models
+﻿namespace CarGalleryAPI.Controllers.Models
 {
     public class Body
     {

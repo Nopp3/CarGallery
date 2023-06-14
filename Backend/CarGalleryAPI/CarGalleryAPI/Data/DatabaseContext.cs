@@ -1,4 +1,4 @@
-﻿using CarGalleryAPI.Models;
+﻿using CarGalleryAPI.Controllers.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarGalleryAPI.Data

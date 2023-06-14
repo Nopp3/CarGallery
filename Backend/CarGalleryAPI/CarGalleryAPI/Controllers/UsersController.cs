@@ -1,7 +1,7 @@
-﻿using CarGalleryAPI.Models;
-using CarGalleryAPI.Data;
+﻿using CarGalleryAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using CarGalleryAPI.Controllers.Models;
 
 namespace CarGalleryAPI.Controllers
 {
@@ -12,6 +12,13 @@ namespace CarGalleryAPI.Controllers
         private readonly DatabaseContext _dbContext;
 
         public UsersController(DatabaseContext dbContext) => _dbContext = dbContext;
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetUsers()
+        {
+            List<User> users = await _dbContext.Users.ToListAsync();
+            return Ok(users);
+        }
 
         [HttpGet]
         //[Route("{id:Guid}")]
@@ -25,36 +32,39 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody] Login login)
+        public async Task<IActionResult> LoginUser([FromBody] Login loginRequest)
         {
-            if (_dbContext.Users.Where(x => x.username == login.username).Any())
+            if (_dbContext.Users.Where(x => x.username == loginRequest.username).Any())
             {
-                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == login.username);
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == loginRequest.username);
 
-                if (user.password == Hash.Encrypt(login.password))
+                if (user.password == Hash.Encrypt(loginRequest.password))
                     return Ok(user.id);
                 else return BadRequest("Invalid password");
             }
-            return NotFound($"Can't find user: {login.username}");
+            return NotFound($"Can't find user: {loginRequest.username}");
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] User user)
+        public async Task<IActionResult> AddUser([FromBody] User userRequest)
         {
-            if (user == null)
+            if (userRequest == null)
                 return BadRequest();
             else
             {
-                if (_dbContext.Users.Where(x => x.username == user.username).Any())
-                    return BadRequest(user.username);
+                if (_dbContext.Users.Where(x => x.username == userRequest.username).Any())
+                    return BadRequest($"User {userRequest.username} is already in database");
 
-                user.id = Guid.NewGuid();
-                user.role_id = (int)Roles.User;
-                user.password = Hash.Encrypt(user.password);
-                await _dbContext.Users.AddAsync(user);
+                userRequest.id = Guid.NewGuid();
+                userRequest.role_id = (int)Roles.User;
+                userRequest.password = Hash.Encrypt(userRequest.password);
+
+                if (!userRequest.email.Contains('@'))
+                    userRequest.email = null;
+                await _dbContext.Users.AddAsync(userRequest);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(user);
+                return Ok(userRequest);
             }
         }
     }

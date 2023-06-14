@@ -47,6 +47,30 @@ ALTER TABLE Users
 	ADD FOREIGN KEY (role_id)
 	REFERENCES Roles (id);
 
+INSERT INTO Fuels (type)
+	VALUES ('Diesel'), ('Gasoline'), ('Electric'), 
+		('Hybrid'), ('Gasoline+CNG'), ('Gasoline+LPG'), 
+		('Ethanol'), ('Hydrogen');
+
+INSERT INTO Bodies (type)
+	VALUES ('Hatchback'), ('Sedan'), ('SUV'), 
+		('Coupe'), ('Convertible'), ('Wagon'), 
+		('Van'), ('Jeep');
+
+INSERT INTO Brands (name)
+	VALUES ('Alfa Romeo'), ('Aston Martin'), ('Audi'), ('BMW'), 
+		('Bentley'), ('Bugatti'), ('Cadillac'), ('Chevrolet'), 
+		('Chrysler'), ('Citroen'), ('Dodge'), ('Ferrari'), 
+		('Fiat'), ('Ford'), ('Honda'), ('Hyundai'), 
+		('Infiniti'), ('Jaguar'), ('Jeep'), ('Kia'), 
+		('Lamborghini'), ('Lexus'), ('Maserati'), ('Mazda'), 
+		('Mercedes'), ('Mitsubishi'), ('Nissan'), ('Opel'), 
+		('Peugeot'), ('Porsche'), ('Renault'), ('Skoda'), 
+		('Seat'), ('Tesla'), ('Toyota'), ('Volkswagen'), ('Volvo');
+
+INSERT INTO Roles (name)
+	VALUES ('Admin'), ('User');
+
 ALTER TABLE Cars
 	ADD FOREIGN KEY (user_id)
 	REFERENCES Users (id);
@@ -59,3 +83,6 @@ ALTER TABLE Cars
 ALTER TABLE Cars
 	ADD FOREIGN KEY (brand_id)
 	REFERENCES Brands (id);
+
+SET IDENTITY_INSERT Bodies OFF
+SET IDENTITY_INSERT Brands OFF
