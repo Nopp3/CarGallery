@@ -11,6 +11,7 @@ import { HomeComponent } from "./components/home/home.component";
 import { AllCarsComponent } from "./components/all-cars/all-cars.component";
 import { SignupComponent } from "./components/signup/signup.component";
 import { PanelComponent } from "./components/panel/panel.component";
+import { PanelFormComponent } from "./components/panel/panel-form.component";
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { PanelComponent } from "./components/panel/panel.component";
     HomeComponent,
     AllCarsComponent,
     SignupComponent,
-    PanelComponent
+    PanelComponent,
+    PanelFormComponent
   ],
   imports: [
     BrowserModule,
