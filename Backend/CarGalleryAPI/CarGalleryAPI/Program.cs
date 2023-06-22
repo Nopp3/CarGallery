@@ -1,3 +1,4 @@
+using CarGalleryAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarGalleryAPI
@@ -8,15 +9,21 @@ namespace CarGalleryAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            if (!DbCreator.DoesDbExist())
+            {
+                DbCreator.CreateDatabase();
+            }
 
+            // Add services to the container.
             builder.Services.AddDbContext<Data.DatabaseContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddMvc();
 
             var app = builder.Build();
 
