@@ -2,8 +2,9 @@
 {
     public enum Roles
     {
-        Admin = 1,
-        User = 2
+        HeadAdmin = 1,
+        Admin = 2,
+        User = 3
     }
 
     public class User
