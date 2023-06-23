@@ -20,7 +20,6 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet]
-        //[Route("{id:Guid}")]
         public async Task<IActionResult> GetUserCars([FromQuery] Guid id)
         {
             List<Car> cars = await _dbContext.Cars.ToListAsync();
@@ -92,7 +91,6 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpDelete]
-        //[Route("{id:Guid}")]
         public async Task<IActionResult> DeleteCar([FromQuery] Guid id)
         {
             var car = await _dbContext.Cars.FindAsync(id);

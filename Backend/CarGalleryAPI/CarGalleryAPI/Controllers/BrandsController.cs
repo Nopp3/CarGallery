@@ -18,28 +18,23 @@ namespace CarGalleryAPI.Controllers
             List<Brand> Brands = await _dbContext.Brands.ToListAsync();
             return Ok(Brands);
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> AddBrand([FromBody] Brand brandRequest)
         {
+            Brand? checkIfExist = await _dbContext.Brands.FirstAsync(x => x.name == brandRequest.name);
+
+            if (checkIfExist != null)
+                return BadRequest($"{brandRequest.name} is already in database");
 
             int currentBiggestId = await _dbContext.Brands.MaxAsync(x => x.id);
 
-            brandRequest.id = currentBiggestId+1;
+            brandRequest.id = currentBiggestId + 1;
 
-            using (var transaction = _dbContext.Database.BeginTransaction())
-            {
-                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Brands ON");
+            await _dbContext.Brands.AddAsync(brandRequest);
+            await _dbContext.SaveChangesAsync();
 
-                await _dbContext.Brands.AddAsync(brandRequest);
-                await _dbContext.SaveChangesAsync();
-
-                _dbContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Brands OFF");
-
-                transaction.Commit();
-
-                return Ok(brandRequest);
-            }
+            return Ok(brandRequest);
         }
 
         [HttpDelete]
