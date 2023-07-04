@@ -21,12 +21,10 @@ export class CarService {
     return this.http.get<Brand[]>(this.baseApiUrl+'/api/Brands')
   }
   addBody(bodyRequest: Body): Observable<Body>{
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' })
-    return this.http.post<Body>(this.baseApiUrl+'/api/Bodies', bodyRequest, {headers})
+    return this.http.post<Body>(this.baseApiUrl+'/api/Bodies', bodyRequest)
   }
   addBrand(brandRequest: Brand): Observable<Brand>{
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' })
-    return this.http.post<Brand>(this.baseApiUrl+'/api/Brands', brandRequest, {headers})
+    return this.http.post<Brand>(this.baseApiUrl+'/api/Brands', brandRequest)
   }
   deleteBody(id: number): Observable<Body>{
     return this.http.delete<Body>(this.baseApiUrl + '/api/Bodies/?id=' + id)
