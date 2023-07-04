@@ -23,13 +23,10 @@ namespace CarGalleryAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBody([FromBody] Body bodyRequest)
         {
-            Body? checkIfExist = await _dbContext.Bodies.FirstAsync(x => x.type == bodyRequest.type);
-
-            if (checkIfExist != null)
+            if (_dbContext.Bodies.Where(x => x.type == bodyRequest.type).Any())
                 return BadRequest($"{bodyRequest.type} is already in database");
 
             int currentBiggestId = await _dbContext.Bodies.MaxAsync(x => x.id);
-
             bodyRequest.id = currentBiggestId + 1;
             
             await _dbContext.Bodies.AddAsync(bodyRequest);

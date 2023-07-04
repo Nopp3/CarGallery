@@ -22,13 +22,10 @@ namespace CarGalleryAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBrand([FromBody] Brand brandRequest)
         {
-            Brand? checkIfExist = await _dbContext.Brands.FirstAsync(x => x.name == brandRequest.name);
-
-            if (checkIfExist != null)
+            if (_dbContext.Brands.Where(x => x.name == brandRequest.name).Any())
                 return BadRequest($"{brandRequest.name} is already in database");
 
             int currentBiggestId = await _dbContext.Brands.MaxAsync(x => x.id);
-
             brandRequest.id = currentBiggestId + 1;
 
             await _dbContext.Brands.AddAsync(brandRequest);
