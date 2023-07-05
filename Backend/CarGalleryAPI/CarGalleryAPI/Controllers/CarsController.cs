@@ -13,19 +13,70 @@ namespace CarGalleryAPI.Controllers
         public CarsController(DatabaseContext dbContext) => _dbContext = dbContext;
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetCars()
+        public IActionResult GetCars()
         {
-            List<Car> cars = await _dbContext.Cars.ToListAsync();
-            return Ok(cars);
+            #region LINQ query
+            var query = from car in _dbContext.Cars
+                        join user in _dbContext.Users on car.user_id equals user.id into userJoin
+                        from user in userJoin.DefaultIfEmpty()
+                        join fuel in _dbContext.Fuels on car.fuel_id equals fuel.id into fuelJoin
+                        from fuel in fuelJoin.DefaultIfEmpty()
+                        join body in _dbContext.Bodies on car.body_id equals body.id into bodyJoin
+                        from body in bodyJoin.DefaultIfEmpty()
+                        join brand in _dbContext.Brands on car.brand_id equals brand.id into brandJoin
+                        from brand in brandJoin.DefaultIfEmpty()
+                        select new
+                        {
+                            car.id,
+                            car.user_id,
+                            user.username,
+                            fuel = fuel.type,
+                            body = body.type,
+                            brand = brand.name,
+                            car.model,
+                            car.productionYear,
+                            car.engine,
+                            car.horsePower,
+                            car.imagePath
+                        };
+            #endregion
+            var result = query.ToList();
+            return Ok(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUserCars([FromQuery] Guid id)
         {
-            List<Car> cars = await _dbContext.Cars.ToListAsync();
-            if (cars.Where(x => x.user_id == id).Any())
+            List<Car> Cars = await _dbContext.Cars.ToListAsync();
+            if (Cars.Where(x => x.user_id == id).Any())
             {
-                return Ok(cars.Where(x => x.user_id == id));
+                #region LINQ query
+                var query = from car in Cars.Where(x => x.user_id == id)
+                            join user in _dbContext.Users on car.user_id equals user.id into userJoin
+                            from user in userJoin.DefaultIfEmpty()
+                            join fuel in _dbContext.Fuels on car.fuel_id equals fuel.id into fuelJoin
+                            from fuel in fuelJoin.DefaultIfEmpty()
+                            join body in _dbContext.Bodies on car.body_id equals body.id into bodyJoin
+                            from body in bodyJoin.DefaultIfEmpty()
+                            join brand in _dbContext.Brands on car.brand_id equals brand.id into brandJoin
+                            from brand in brandJoin.DefaultIfEmpty()
+                            select new
+                            {
+                                car.id,
+                                car.user_id,
+                                user.username,
+                                fuel = fuel.type,
+                                body = body.type,
+                                brand = brand.name,
+                                car.model,
+                                car.productionYear,
+                                car.engine,
+                                car.horsePower,
+                                car.imagePath
+                            };
+                #endregion
+                var result = query.ToList();
+                return Ok(result);
             }
             return NotFound();
         }
@@ -40,7 +91,31 @@ namespace CarGalleryAPI.Controllers
             List<Car> cars = await _dbContext.Cars.ToListAsync();
             if (bodies != null && cars.Where(x => x.body_id == bodies.id).Any())
             {
-                return Ok(cars.Where(x => x.body_id == bodies.id));
+                #region LINQ query
+                var query = from car in cars.Where(x => x.body_id == bodies.id)
+                            join user in _dbContext.Users on car.user_id equals user.id into userJoin
+                            from user in userJoin.DefaultIfEmpty()
+                            join fuel in _dbContext.Fuels on car.fuel_id equals fuel.id into fuelJoin
+                            from fuel in fuelJoin.DefaultIfEmpty()
+                            join brand in _dbContext.Brands on car.brand_id equals brand.id into brandJoin
+                            from brand in brandJoin.DefaultIfEmpty()
+                            select new
+                            {
+                                car.id,
+                                car.user_id,
+                                user.username,
+                                fuel = fuel.type,
+                                body = bodies.type,
+                                brand = brand.name,
+                                car.model,
+                                car.productionYear,
+                                car.engine,
+                                car.horsePower,
+                                car.imagePath
+                            };
+                #endregion
+                var result = query.ToList();
+                return Ok(result);
             }
             return NotFound();
         }
@@ -53,7 +128,31 @@ namespace CarGalleryAPI.Controllers
             List<Car> cars = await _dbContext.Cars.ToListAsync();
             if (brands != null && cars.Where(x => x.brand_id == brands.id).Any())
             {
-                return Ok(cars.Where(x => x.brand_id == brands.id));
+                #region LINQ query
+                var query = from car in cars.Where(x => x.brand_id == brands.id)
+                            join user in _dbContext.Users on car.user_id equals user.id into userJoin
+                            from user in userJoin.DefaultIfEmpty()
+                            join fuel in _dbContext.Fuels on car.fuel_id equals fuel.id into fuelJoin
+                            from fuel in fuelJoin.DefaultIfEmpty()
+                            join body in _dbContext.Bodies on car.body_id equals body.id into bodyJoin
+                            from body in bodyJoin.DefaultIfEmpty()
+                            select new
+                            {
+                                car.id,
+                                car.user_id,
+                                user.username,
+                                fuel = fuel.type,
+                                body = body.type,
+                                brand = brands.name,
+                                car.model,
+                                car.productionYear,
+                                car.engine,
+                                car.horsePower,
+                                car.imagePath
+                            };
+                #endregion
+                var result = query.ToList();
+                return Ok(result);
             }
             return NotFound();
         }
