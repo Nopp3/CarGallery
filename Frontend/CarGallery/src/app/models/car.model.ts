@@ -1,6 +1,28 @@
+export interface CarUI {
+  id: string, //GUID
+  user_id: string, //GUID
+  user: string, //username
+  fuel: string,
+  body: string,
+  brand: string,
+  model:	string,
+  productionYear: number,
+  engine: number,
+  horsePower: number,
+  imagePath: string
+}
 
 export interface Car {
-  id: string
+  id: string, //GUID
+  user_id: string, //GUID
+  fuel_id: number,
+  body_id: number,
+  brand_id: number,
+  model:	string,
+  productionYear: number,
+  engine: number,
+  horsePower: number,
+  imagePath: string
 }
 
 export interface Body {
@@ -11,4 +33,9 @@ export interface Body {
 export interface Brand {
   id: number,
   name: string
+}
+
+export interface Fuel {
+  id: number,
+  type: string
 }

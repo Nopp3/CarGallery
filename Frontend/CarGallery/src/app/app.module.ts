@@ -12,6 +12,7 @@ import { AllCarsComponent } from "./components/all-cars/all-cars.component";
 import { SignupComponent } from "./components/signup/signup.component";
 import { PanelComponent } from "./components/panel/panel.component";
 import { PanelFormComponent } from "./components/panel/panel-form.component";
+import { AddCarComponent } from "./components/add-car/add-car.component";
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { PanelFormComponent } from "./components/panel/panel-form.component";
     AllCarsComponent,
     SignupComponent,
     PanelComponent,
-    PanelFormComponent
+    PanelFormComponent,
+    AddCarComponent
   ],
   imports: [
     BrowserModule,
