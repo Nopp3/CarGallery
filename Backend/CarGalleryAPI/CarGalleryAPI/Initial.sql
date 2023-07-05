@@ -41,7 +41,7 @@ CREATE TABLE Cars (
 	productionYear INT,
 	engine INT,
 	horsePower INT,
-	imagePath VARCHAR(50)
+	imagePath VARCHAR(250)
 
 	CONSTRAINT FK_Cars_Users FOREIGN KEY (user_id)
         REFERENCES Users (id),
