@@ -1,7 +1,31 @@
 <div class="container">
   <div *ngFor="let car of cars">
     <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}</h1>
-    <img src="{{ car.imagePath }}" width="500px">
+    <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
+      <img src="{{ car.imagePath }}" class="w-50 rounded">
+    </a>
+
+    <div class="collapse" id="{{ car.id }}">
+      <table class="table w-50">
+        <thead></thead>
+        <tbody>
+          <tr>
+            <th>Body</th>
+            <td>{{ car.body }}</td>
+          </tr>
+          <tr>
+            <th>Fuel</th>
+            <td>{{ car.fuel }}</td>
+          </tr>
+          <tr>
+            <th>Engine</th>
+            <td>{{ car.engine }}cc, {{ car.horsePower }} HP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <p>Author: {{ car.username }}</p>
   </div>
 </div>
+
