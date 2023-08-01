@@ -18,13 +18,18 @@ export class CarService {
   getUserCars(): Observable<CarUI[]>{
     return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars?id=' + SessionService.get("ActiveUser"))
   }
+  getCarsByBrand(brandRequest: string): Observable<CarUI[]> {
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars//brand?brand=' + brandRequest)
+  }
   addCar(carRequest: Car): Observable<Car>{
     return this.http.post<Car>(this.baseApiUrl + '/api/Cars', carRequest)
   }
-
-  // Later
-  // DELETE && PUT
-  // For filters /api/Cars/body || brand
+  updateCar(updateCarRequest: Car, guid: string): Observable<Car>{
+    return this.http.put<Car>(this.baseApiUrl + '/api/Cars/' + guid, updateCarRequest)
+  }
+  deleteCar(guid: string): Observable<Car>{
+    return this.http.delete<Car>(this.baseApiUrl + '/api/Cars?id=' + guid)
+  }
 
   getFuels(): Observable<Fuel[]>{
     return this.http.get<Fuel[]>(this.baseApiUrl + '/api/Cars/Fuels')
