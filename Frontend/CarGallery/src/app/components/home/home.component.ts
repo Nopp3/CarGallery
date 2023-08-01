@@ -23,6 +23,11 @@ export class HomeComponent {
   }
 
   deleteCar(id: string){
-    console.log(id)
+    this.carService.deleteCar(id)
+      .subscribe({
+        next: () => {
+          window.location.reload()
+        }
+      })
   }
 }
