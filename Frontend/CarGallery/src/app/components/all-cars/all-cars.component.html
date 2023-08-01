@@ -1,1 +1,7 @@
-<p>all-cars works!</p>
+<div class="container">
+  <div *ngFor="let car of cars">
+    <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}</h1>
+    <img src="{{ car.imagePath }}" width="500px">
+    <p>Author: {{ car.username }}</p>
+  </div>
+</div>

@@ -1,7 +1,6 @@
 export interface CarUI {
   id: string, //GUID
-  user_id: string, //GUID
-  user: string, //username
+  username: string,
   fuel: string,
   body: string,
   brand: string,
