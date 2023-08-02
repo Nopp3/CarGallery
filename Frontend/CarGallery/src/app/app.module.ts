@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RoutingModule } from "./routing/routing.module";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { MatDialogModule } from "@angular/material/dialog";
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from "./components/navbar/navbar.component";
@@ -13,6 +14,7 @@ import { SignupComponent } from "./components/signup/signup.component";
 import { PanelComponent } from "./components/panel/panel.component";
 import { PanelFormComponent } from "./components/panel/panel-form.component";
 import { AddCarComponent } from "./components/add-car/add-car.component";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { AddCarComponent } from "./components/add-car/add-car.component";
     BrowserModule,
     RoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
