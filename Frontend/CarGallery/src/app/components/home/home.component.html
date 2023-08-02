@@ -1,8 +1,10 @@
 <div class="container">
-  <a class="btn btn-dark float-end m-2" href="/addCar">Add Car</a>
+  <a class="btn btn-dark float-end m-2" (click)="addCar()">Add Car</a>
   <div *ngFor="let car of cars">
     <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}
-      <a (click)="deleteCar(car.id)" class="fa-solid fa-trash"></a></h1>
+      <a (click)="editCar(car.id)" class="fa-solid fa-pen-to-square m-2"></a>
+      <a (click)="deleteCar(car.id)" class="fa-solid fa-trash m-2"></a>
+    </h1>
 
     <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
       <img src="{{ car.imagePath }}" class="w-50 rounded">

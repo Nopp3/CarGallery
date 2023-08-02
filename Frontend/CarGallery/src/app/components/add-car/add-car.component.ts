@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { SessionService } from "../../services/session/session.service";
-import { Router } from "@angular/router";
 import { Body, Brand, Car, Fuel } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-add-car',
@@ -27,12 +27,10 @@ export class AddCarComponent {
   fuelsToSelect: Fuel[] = []
   displayMessageBox = false
   messageBoxText = ""
-  constructor(private carService: CarService, private router: Router) {}
+  constructor(private carService: CarService,
+              private dialogRef: MatDialogRef<AddCarComponent>) {}
   ngOnInit(){
     this.displayMessageBox = false;
-    if (SessionService.get("ActiveUser") == null){
-      this.router.navigate(['login'])
-    }
 
     this.carService.getBrands().subscribe({
       next: x => this.brandsToSelect = x
@@ -56,6 +54,7 @@ export class AddCarComponent {
           next: (x) => {
             console.log('success')
             console.log(x)
+            this.dialogRef.close()
           },
           error: err => {
             this.displayMessageBox = true
