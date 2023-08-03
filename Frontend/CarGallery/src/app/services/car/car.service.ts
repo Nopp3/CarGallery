@@ -12,14 +12,17 @@ import { environment } from "../../enviroment";
 export class CarService {
   baseApiUrl: string = environment.baseApiUrl;
   constructor(private http: HttpClient) { }
+  getCarByGuid(guid: string): Observable<Car>{
+    return this.http.get<Car>(this.baseApiUrl + '/api/Cars?id=' + guid)
+  }
   getAllCars(): Observable<CarUI[]>{
     return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/all')
   }
   getUserCars(): Observable<CarUI[]>{
-    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars?id=' + SessionService.get("ActiveUser"))
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/user?id=' + SessionService.get("ActiveUser"))
   }
   getCarsByBrand(brandRequest: string): Observable<CarUI[]> {
-    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars//brand?brand=' + brandRequest)
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/brand?brand=' + brandRequest)
   }
   addCar(carRequest: Car): Observable<Car>{
     return this.http.post<Car>(this.baseApiUrl + '/api/Cars', carRequest)
