@@ -5,7 +5,7 @@ namespace CarGalleryAPI.Data
 {
     public static class DbCreator
     {
-        private static SqlConnection connection = new SqlConnection("Server=localhost;Database=master;User Id=sa;Password=123;TrustServerCertificate=true;");
+        private static SqlConnection connection = new SqlConnection("Server=localhost;Database=master;Integrated Security=True;TrustServerCertificate=true;");
         
         private static string dbExistSql = @"SELECT CASE WHEN DB_ID('CarGalleryDB') IS NULL THEN 0 ELSE 1 END";
 
