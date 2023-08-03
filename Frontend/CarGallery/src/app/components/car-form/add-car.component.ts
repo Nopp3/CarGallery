@@ -10,6 +10,7 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrls: ['./add-car.component.css']
 })
 export class AddCarComponent {
+  title: string = 'Add Car'
   carRequest: Car = {
     id: '00000000-0000-0000-0000-000000000000',
     user_id: '00000000-0000-0000-0000-000000000000',

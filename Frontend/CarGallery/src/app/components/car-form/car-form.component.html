@@ -1,0 +1,67 @@
+<div *ngIf="displayMessageBox" class="message-box">
+  <p>{{ messageBoxText }}</p>
+</div>
+
+<div class="container my-5">
+  <div class="row mb-3">
+    <a mat-dialog-close class="col-1 text-decoration-none display-5 fa-solid fa-arrow-left"></a>
+    <h1 class="col-4">{{ title }}</h1>
+  </div>
+  <form ngNativeValidate #form="ngForm" (ngSubmit)="addCar()">
+    <mat-dialog-content class="mat-typography">
+      <div class="mb-2">
+        <label for="brand" class="form-label">Brand</label>
+        <select class="form-select"
+                [(ngModel)]="carRequest.brand_id" name="brand_id" id="brand">
+          <option [ngValue]="0">Chose brand</option>
+          <option *ngFor="let brand of brandsToSelect" [ngValue]="brand.id">{{brand.name}}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label for="model" class="form-label">Model</label>
+        <input type="text" class="form-control" id="model"
+               name='model' [(ngModel)]="carRequest.model">
+      </div>
+      <div class="mb-2">
+        <label for="horsePower" class="form-label">Horse power</label>
+        <input type="number" class="form-control" id="horsePower" required
+               min="0" name='power' [(ngModel)]="carRequest.horsePower">
+      </div>
+      <div class="mb-2">
+        <label for="engine" class="form-label">Engine (cc)</label>
+        <input type="number" class="form-control" id="engine" required
+               min="0" name='engine' [(ngModel)]="carRequest.engine">
+      </div>
+      <div class="mb-2">
+        <label for="productionY" class="form-label">Production year</label>
+        <input type="number" class="form-control" id="productionY" required
+               min="1886" max="{{getCurrentYear()}}" name='year' [(ngModel)]="carRequest.productionYear">
+      </div>
+      <div class="mb-2">
+        <label for="body" class="form-label">Body</label>
+        <select class="form-select"
+                [(ngModel)]="carRequest.body_id" name="body_id" id="body">
+          <option [ngValue]="0">Chose body</option>
+          <option *ngFor="let body of bodiesToSelect" [ngValue]="body.id">{{body.type}}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label for="fuel" class="form-label">Fuel</label>
+        <select class="form-select"
+                [(ngModel)]="carRequest.fuel_id" name="fuel_id" id="fuel">
+          <option [ngValue]="0">Chose Fuel</option>
+          <option *ngFor="let fuel of fuelsToSelect" [ngValue]="fuel.id">{{fuel.type}}</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <label for="image" class="form-label">Image URL</label>
+        <input type="text" class="form-control" id="image" required
+               name='image' [(ngModel)]="carRequest.imagePath">
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button type="submit" class="btn btn-primary">{{ title }}</button>
+      <button type="reset" class="btn btn-primary m-1">Clear</button>
+    </mat-dialog-actions>
+  </form>
+</div>
