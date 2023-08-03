@@ -1,16 +1,15 @@
-import { Component } from '@angular/core';
-import { SessionService } from "../../services/session/session.service";
+import { Component, Inject } from '@angular/core';
 import { Body, Brand, Car, Fuel } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-car-form',
   templateUrl: './car-form.component.html',
   styleUrls: ['./car-form.component.css']
 })
-export class AddCarComponent {
-  title: string = 'Add Car'
+export class EditCarComponent {
+  title: string = 'Edit Car'
   carRequest: Car = {
     id: '00000000-0000-0000-0000-000000000000',
     user_id: '00000000-0000-0000-0000-000000000000',
@@ -29,7 +28,8 @@ export class AddCarComponent {
   displayMessageBox = false
   messageBoxText = ""
   constructor(private carService: CarService,
-              private dialogRef: MatDialogRef<AddCarComponent>) {}
+              private dialogRef: MatDialogRef<EditCarComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any) {}
   ngOnInit(){
     this.displayMessageBox = false;
 
@@ -42,15 +42,17 @@ export class AddCarComponent {
     this.carService.getFuels().subscribe({
       next: x => this.fuelsToSelect = x
     })
+    this.carService.getCarByGuid(this.data.carGuid).subscribe({
+      next: x => this.carRequest = x
+    })
   }
   addEditCar(){
-    this.carRequest.user_id = SessionService.get("ActiveUser")
     if (this.carRequest.fuel_id == 0 || this.carRequest.body_id == 0 || this.carRequest.brand_id == 0){
       this.displayMessageBox = true
       this.messageBoxText = 'Something was not selected'
     }
     else{
-      this.carService.addCar(this.carRequest)
+      this.carService.updateCar(this.carRequest, this.data.carGuid)
         .subscribe({
           next: (x) => {
             window.location.reload()

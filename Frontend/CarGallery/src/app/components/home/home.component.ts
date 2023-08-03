@@ -4,7 +4,8 @@ import { Router } from "@angular/router";
 import { CarUI } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
 import { MatDialog } from "@angular/material/dialog";
-import { AddCarComponent } from "../add-car/add-car.component";
+import { AddCarComponent } from "../car-form/add-car.component";
+import {EditCarComponent} from "../car-form/edit-car.component";
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,12 @@ export class HomeComponent {
     })
   }
   editCar(id: string){
-
+    this.dialog.open(EditCarComponent, {
+      width: '50%',
+      data: {
+        carGuid: id,
+      }
+    })
   }
   deleteCar(id: string){
     this.carService.deleteCar(id)

@@ -13,8 +13,9 @@ import { AllCarsComponent } from "./components/all-cars/all-cars.component";
 import { SignupComponent } from "./components/signup/signup.component";
 import { PanelComponent } from "./components/panel/panel.component";
 import { PanelFormComponent } from "./components/panel/panel-form.component";
-import { AddCarComponent } from "./components/add-car/add-car.component";
+import { AddCarComponent } from "./components/car-form/add-car.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EditCarComponent } from "./components/car-form/edit-car.component";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SignupComponent,
     PanelComponent,
     PanelFormComponent,
-    AddCarComponent
+    AddCarComponent,
+    EditCarComponent
   ],
   imports: [
     BrowserModule,
