@@ -21,8 +21,8 @@ export class CarService {
   getUserCars(): Observable<CarUI[]>{
     return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/user?id=' + SessionService.get("ActiveUser"))
   }
-  getCarsByBrand(brandRequest: string): Observable<CarUI[]> {
-    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/brand?brand=' + brandRequest)
+  getCarsByBrand(brandIdRequest: number): Observable<CarUI[]> {
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/brand?id=' + brandIdRequest)
   }
   addCar(carRequest: Car): Observable<Car>{
     return this.http.post<Car>(this.baseApiUrl + '/api/Cars', carRequest)
@@ -38,16 +38,19 @@ export class CarService {
     return this.http.get<Fuel[]>(this.baseApiUrl + '/api/Cars/Fuels')
   }
   getBodies(): Observable<Body[]>{
-    return this.http.get<Body[]>(this.baseApiUrl+'/api/Bodies')
+    return this.http.get<Body[]>(this.baseApiUrl + '/api/Bodies')
   }
   getBrands(): Observable<Brand[]>{
-    return this.http.get<Brand[]>(this.baseApiUrl+'/api/Brands')
+    return this.http.get<Brand[]>(this.baseApiUrl + '/api/Brands')
+  }
+  getUsedBrands(): Observable<Brand[]>{
+    return this.http.get<Brand[]>(this.baseApiUrl + '/api/Brands/used')
   }
   addBody(bodyRequest: Body): Observable<Body>{
-    return this.http.post<Body>(this.baseApiUrl+'/api/Bodies', bodyRequest)
+    return this.http.post<Body>(this.baseApiUrl + '/api/Bodies', bodyRequest)
   }
   addBrand(brandRequest: Brand): Observable<Brand>{
-    return this.http.post<Brand>(this.baseApiUrl+'/api/Brands', brandRequest)
+    return this.http.post<Brand>(this.baseApiUrl + '/api/Brands', brandRequest)
   }
   deleteBody(id: number): Observable<Body>{
     return this.http.delete<Body>(this.baseApiUrl + '/api/Bodies/?id=' + id)
