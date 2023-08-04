@@ -132,9 +132,9 @@ namespace CarGalleryAPI.Controllers
 
         [HttpGet]
         [Route("brand")]
-        public async Task<IActionResult> GetCarsByBrand([FromQuery] string brand)
+        public async Task<IActionResult> GetCarsByBrand([FromQuery] int id)
         {
-            Brand? brands = await _dbContext.Brands.FirstOrDefaultAsync(x => x.name == brand);
+            Brand? brands = await _dbContext.Brands.FirstOrDefaultAsync(x => x.id == id);
             List<Car> cars = await _dbContext.Cars.ToListAsync();
             if (brands != null && cars.Where(x => x.brand_id == brands.id).Any())
             {
