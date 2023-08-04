@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using CarGalleryAPI.Controllers.Models;
+using System.Linq;
 
 namespace CarGalleryAPI.Controllers
 {
@@ -16,6 +17,16 @@ namespace CarGalleryAPI.Controllers
         public async Task<IActionResult> GetBrands()
         {
             List<Brand> Brands = await _dbContext.Brands.ToListAsync();
+            return Ok(Brands);
+        }
+
+        [HttpGet]
+        [Route("used")]
+        public async Task<IActionResult> GetUsedBrands()
+        {
+            List<Brand> Brands = await _dbContext.Brands.Where(x => _dbContext.Cars.Any(c => c.brand_id == x.id)).ToListAsync();
+            if (Brands == null)
+                return NotFound();
             return Ok(Brands);
         }
         
