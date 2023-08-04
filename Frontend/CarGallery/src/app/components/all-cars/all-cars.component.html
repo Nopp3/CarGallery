@@ -1,4 +1,9 @@
 <div class="container">
+  <select class="form-select float-end w-25 m-2" (change)="onFilterChange()"
+          [(ngModel)]="filter" name="brandFilter" id="brand">
+    <option [ngValue]="0">All brands</option>
+    <option *ngFor="let brand of brands" [ngValue]="brand.id">{{ brand.name }}</option>
+  </select>
   <div *ngFor="let car of cars">
     <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}</h1>
     <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
