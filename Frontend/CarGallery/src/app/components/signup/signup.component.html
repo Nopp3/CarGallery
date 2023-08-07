@@ -1,0 +1,39 @@
+<div *ngIf="displayMessageBox" class="message-box">
+  <p>{{ messageBoxText }}</p>
+</div>
+
+<div class="container my-5">
+  <div class="row mb-3">
+    <a routerLink="/login" class="col-1 text-decoration-none display-5 fa-solid fa-arrow-left"></a>
+    <h1 class="col-4">Create account</h1>
+  </div>
+
+
+  <div class="row">
+    <div class="col-6">
+      <form ngNativeValidate #form="ngForm" (ngSubmit)="addUser()">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" required
+                 name='username' [(ngModel)] = "newUser.username">
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" required
+                 name='password' [(ngModel)]="newUser.password">
+        </div>
+        <div class="mb-3">
+          <label for="cPassword" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="cPassword" required
+                 name='cPassword' [(ngModel)]="this.confirmPass">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" class="form-control" id="email"
+                 name='email' [(ngModel)]="newUser.email">
+        </div>
+        <button type="submit" class="btn btn-primary">Create account</button>
+      </form>
+    </div>
+  </div>
+</div>

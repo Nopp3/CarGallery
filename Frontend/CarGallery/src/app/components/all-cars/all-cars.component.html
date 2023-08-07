@@ -1,0 +1,36 @@
+<div class="container">
+  <select class="form-select float-end w-25 m-2" (change)="onFilterChange()"
+          [(ngModel)]="filter" name="brandFilter" id="brand">
+    <option [ngValue]="0">All brands</option>
+    <option *ngFor="let brand of brands" [ngValue]="brand.id">{{ brand.name }}</option>
+  </select>
+  <div *ngFor="let car of cars">
+    <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}</h1>
+    <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
+      <img src="{{ car.imagePath }}" class="w-50 rounded">
+    </a>
+
+    <div class="collapse" id="{{ car.id }}">
+      <table class="table w-50">
+        <thead></thead>
+        <tbody>
+          <tr>
+            <th>Body</th>
+            <td>{{ car.body }}</td>
+          </tr>
+          <tr>
+            <th>Fuel</th>
+            <td>{{ car.fuel }}</td>
+          </tr>
+          <tr>
+            <th>Engine</th>
+            <td>{{ car.engine }}cc, {{ car.horsePower }} HP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Author: {{ car.username }}</p>
+  </div>
+</div>
+

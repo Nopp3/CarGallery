@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="row">
+<!--    Column number 1-->
+    <div class="col-3 table-container">
+      <div class="table-title">
+        <h4>Car brands</h4>
+      </div>
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let brand of brands">
+          <th scope="row">{{brand.id}}</th>
+          <td class="row">
+            <div class="col-10">{{brand.name}}</div>
+            <a (click)="deleteRow('brand', brand.id)" class="col-2 fa-solid fa-trash"></a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <panel-form [whichColumn]="'brands'"></panel-form>
+    </div>
+
+<!--    Column number 2-->
+    <div class="col-3 table-container">
+      <div class="table-title">
+        <h4>Body types</h4>
+      </div>
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Type</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let body of bodies">
+          <th scope="row">{{body.id}}</th>
+          <td class="row">
+            <div class="col-10">{{body.type}}</div>
+            <a (click)="deleteRow('body', body.id)" class="col-2 fa-solid fa-trash"></a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <panel-form [whichColumn]="'bodies'"></panel-form>
+    </div>
+<!--    Column number 3-->
+    <div class="col-6">
+      <div class="table-container">
+        <div class="table-title">
+          <h4>Users</h4>
+        </div>
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let user of users">
+            <th scope="row">{{user.id}}</th>
+<!--            <td class="row">-->
+              <div> <!--class="col-8">-->{{user.username}}</div>
+<!--              <a class="col-4 fa-solid fa-trash"></a>-->
+<!--            </td>-->
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

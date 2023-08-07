@@ -1,0 +1,34 @@
+<div class="container">
+  <a class="btn btn-dark float-end m-2" (click)="addCar()">Add Car</a>
+  <div *ngFor="let car of cars">
+    <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}
+      <a (click)="editCar(car.id)" class="fa-solid fa-pen-to-square m-2"></a>
+      <a (click)="deleteCar(car.id)" class="fa-solid fa-trash m-2"></a>
+    </h1>
+
+    <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
+      <img src="{{ car.imagePath }}" class="w-50 rounded">
+    </a>
+
+    <div class="collapse" id="{{ car.id }}">
+      <table class="table w-50">
+        <thead></thead>
+        <tbody>
+        <tr>
+          <th>Body</th>
+          <td>{{ car.body }}</td>
+        </tr>
+        <tr>
+          <th>Fuel</th>
+          <td>{{ car.fuel }}</td>
+        </tr>
+        <tr>
+          <th>Engine</th>
+          <td>{{ car.engine }}cc, {{ car.horsePower }} HP</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
