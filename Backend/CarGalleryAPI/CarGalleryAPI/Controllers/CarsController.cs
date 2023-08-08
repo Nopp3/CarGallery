@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using CarGalleryAPI.Controllers.Models;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CarGalleryAPI.Controllers
 {
@@ -10,7 +13,12 @@ namespace CarGalleryAPI.Controllers
     public class CarsController : Controller
     {
         private readonly DatabaseContext _dbContext;
-        public CarsController(DatabaseContext dbContext) => _dbContext = dbContext;
+        private readonly IWebHostEnvironment _env;
+        public CarsController(DatabaseContext dbContext, IWebHostEnvironment env)
+        {
+            _dbContext = dbContext;
+            _env = env;
+        }
 
         [HttpGet("all")]
         public IActionResult GetCars()
@@ -168,9 +176,28 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCar([FromBody] Car carRequest)
+        public async Task<IActionResult> AddCar()
         {
+            var formCollection = await Request.ReadFormAsync();
+
+            //Upload File
+            var file = formCollection.Files.GetFile("image");
+            if (file == null || file.Length == 0)
+                return BadRequest("TEST");
+
+            string uniqueImgName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+            string imagePath = Path.Combine(_env.WebRootPath, "images", uniqueImgName);
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            //Add Car
+            var carJson = formCollection["carRequest"];
+            var carRequest = JsonSerializer.Deserialize<Car>(carJson);
             carRequest.id = Guid.NewGuid();
+            carRequest.imagePath = $@"/images/{uniqueImgName}";
             await _dbContext.AddAsync(carRequest);
             await _dbContext.SaveChangesAsync();
 
