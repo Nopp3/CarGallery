@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { CarUI, Car, Body, Brand, Fuel } from "../../models/car.model";
 import { SessionService } from "../session/session.service";
 
-import { environment } from "../../enviroment";
+import { environment } from "../../environment";
 
 @Injectable({
   providedIn: 'root'
