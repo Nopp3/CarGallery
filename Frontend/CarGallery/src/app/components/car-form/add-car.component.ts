@@ -23,6 +23,8 @@ export class AddCarComponent {
     horsePower: 0,
     imagePath: ''
   }
+  fileRequest: File | null = null;
+
   brandsToSelect: Brand[] = []
   bodiesToSelect: Body[] = []
   fuelsToSelect: Fuel[] = []
@@ -45,12 +47,16 @@ export class AddCarComponent {
   }
   addEditCar(){
     this.carRequest.user_id = SessionService.get("ActiveUser")
-    if (this.carRequest.fuel_id == 0 || this.carRequest.body_id == 0 || this.carRequest.brand_id == 0){
+    if (this.carRequest.fuel_id == 0 || this.carRequest.body_id == 0 || this.carRequest.brand_id == 0 || !this.fileRequest){
       this.displayMessageBox = true
       this.messageBoxText = 'Something was not selected'
     }
     else{
-      this.carService.addCar(this.carRequest)
+      let formData = new FormData()
+      formData.append('carRequest', JSON.stringify(this.carRequest))
+      formData.append('image', this.fileRequest, this.fileRequest.name)
+
+      this.carService.addCar(formData)
         .subscribe({
           next: (x) => {
             window.location.reload()
@@ -65,5 +71,8 @@ export class AddCarComponent {
   }
   getCurrentYear(): number {
     return new Date().getFullYear()
+  }
+  fileSelected(event: any){
+    this.fileRequest = event.target.files[0]
   }
 }

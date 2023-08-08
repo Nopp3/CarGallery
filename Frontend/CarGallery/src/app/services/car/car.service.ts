@@ -24,8 +24,8 @@ export class CarService {
   getCarsByBrand(brandIdRequest: number): Observable<CarUI[]> {
     return this.http.get<CarUI[]>(this.baseApiUrl + '/api/Cars/brand?id=' + brandIdRequest)
   }
-  addCar(carRequest: Car): Observable<Car>{
-    return this.http.post<Car>(this.baseApiUrl + '/api/Cars', carRequest)
+  addCar(formDataRequest: FormData): Observable<Car>{
+    return this.http.post<Car>(this.baseApiUrl + '/api/Cars', formDataRequest)
   }
   updateCar(updateCarRequest: Car, guid: string): Observable<Car>{
     return this.http.put<Car>(this.baseApiUrl + '/api/Cars/' + guid, updateCarRequest)

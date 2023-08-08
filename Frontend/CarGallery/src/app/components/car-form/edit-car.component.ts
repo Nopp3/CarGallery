@@ -22,6 +22,8 @@ export class EditCarComponent {
     horsePower: 0,
     imagePath: ''
   }
+  fileRequest: File | null = null;
+
   brandsToSelect: Brand[] = []
   bodiesToSelect: Body[] = []
   fuelsToSelect: Fuel[] = []
@@ -67,5 +69,8 @@ export class EditCarComponent {
   }
   getCurrentYear(): number {
     return new Date().getFullYear()
+  }
+  fileSelected(event: any){
+    this.fileRequest = event.target.files[0]
   }
 }

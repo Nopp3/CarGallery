@@ -54,9 +54,9 @@
         </select>
       </div>
       <div class="mb-2">
-        <label for="image" class="form-label">Image URL</label>
-        <input type="text" class="form-control" id="image" required
-               name='image' [(ngModel)]="carRequest.imagePath">
+        <label for="image" class="form-label">Image</label>
+        <input type="file" class="form-control" id="image"
+               name='image' accept="image/*" (change)="fileSelected($event)">
       </div>
     </mat-dialog-content>
     <mat-dialog-actions>
