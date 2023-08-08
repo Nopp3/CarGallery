@@ -29,6 +29,10 @@ namespace CarGalleryAPI
 
             app.UseStaticFiles();
 
+            app.UseCors(builder => builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()) ;
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
