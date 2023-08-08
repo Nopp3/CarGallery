@@ -5,7 +5,8 @@ import { CarUI } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
 import { MatDialog } from "@angular/material/dialog";
 import { AddCarComponent } from "../car-form/add-car.component";
-import {EditCarComponent} from "../car-form/edit-car.component";
+import { EditCarComponent } from "../car-form/edit-car.component";
+import { environment } from 'src/app/environment';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ export class HomeComponent {
   constructor(private router : Router, private carService: CarService,
               private dialog: MatDialog) {}
   cars: CarUI[] = []
+  apiUrl: string = environment.baseApiUrl
   ngOnInit(){
     if (SessionService.get("ActiveUser") == null){
       this.router.navigate(['login'])
