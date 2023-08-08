@@ -54,7 +54,14 @@ export class EditCarComponent {
       this.messageBoxText = 'Something was not selected'
     }
     else{
-      this.carService.updateCar(this.carRequest, this.data.carGuid)
+      let formData = new FormData()
+      formData.append('updateCarRequest', JSON.stringify(this.carRequest))
+
+      if (this.fileRequest){
+        formData.append('image', this.fileRequest, this.fileRequest.name)
+      }
+
+      this.carService.updateCar(formData, this.data.carGuid)
         .subscribe({
           next: (x) => {
             window.location.reload()

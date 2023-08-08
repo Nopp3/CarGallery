@@ -27,8 +27,8 @@ export class CarService {
   addCar(formDataRequest: FormData): Observable<Car>{
     return this.http.post<Car>(this.baseApiUrl + '/api/Cars', formDataRequest)
   }
-  updateCar(updateCarRequest: Car, guid: string): Observable<Car>{
-    return this.http.put<Car>(this.baseApiUrl + '/api/Cars/' + guid, updateCarRequest)
+  updateCar(formDataRequest: FormData, guid: string): Observable<Car>{
+    return this.http.put<Car>(this.baseApiUrl + '/api/Cars/' + guid, formDataRequest)
   }
   deleteCar(guid: string): Observable<Car>{
     return this.http.delete<Car>(this.baseApiUrl + '/api/Cars?id=' + guid)
