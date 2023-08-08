@@ -20,6 +20,9 @@ export class PanelComponent {
   constructor(private route: Router, private carService: CarService,
               private userService: UserService) {}
   ngOnInit(){
+    if (SessionService.get("ActiveUser") == null){
+      this.route.navigate(['login'])
+    }
     this.userService.getUser(SessionService.get('ActiveUser'))
       .subscribe({
         next: user => {
