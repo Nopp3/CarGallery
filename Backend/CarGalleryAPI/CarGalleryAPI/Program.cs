@@ -31,7 +31,7 @@ namespace CarGalleryAPI
 
             app.UseCors(builder => builder.AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod()) ;
+                .AllowAnyMethod());
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
