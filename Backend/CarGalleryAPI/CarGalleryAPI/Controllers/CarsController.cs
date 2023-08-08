@@ -206,16 +206,42 @@ namespace CarGalleryAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> UpdateCar([FromRoute] Guid id, Car updateCarRequest)
+        public async Task<IActionResult> UpdateCar([FromRoute] Guid id)
         {
+            var formCollection = await Request.ReadFormAsync();
+            string updateImagePath = "";
+            var file = formCollection.Files.GetFile("image");
+            if (file != null && file.Length != 0)
+            {
+                string uniqueImgName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+                string imagePath = Path.Combine(_env.WebRootPath, "images", uniqueImgName);
+
+                using (var fileStream = new FileStream(imagePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                updateImagePath = $@"/images/{uniqueImgName}";
+            }
+
+            var carJson = formCollection["updateCarRequest"];
+            var updateCarRequest = JsonSerializer.Deserialize<Car>(carJson);
             var car = await _dbContext.Cars.FindAsync(id);
 
             if (car == null)
                 return NotFound();
+            if (updateImagePath == "")
+            {
+                updateImagePath = updateCarRequest.imagePath;
+            }
+            else
+            {
+                System.IO.File.Delete(_env.WebRootPath + updateCarRequest.imagePath.Replace('/', '\\'));
+            }
 
             car.model = updateCarRequest.model;
             car.fuel_id = updateCarRequest.fuel_id;
-            car.imagePath = updateCarRequest.imagePath;
+            car.imagePath = updateImagePath;
             car.body_id = updateCarRequest.body_id;
             car.brand_id = updateCarRequest.brand_id;
             car.engine = updateCarRequest.engine;
@@ -233,6 +259,8 @@ namespace CarGalleryAPI.Controllers
 
             if (car == null)
                 return NotFound();
+
+            System.IO.File.Delete(_env.WebRootPath + car.imagePath.Replace('/', '\\'));
 
             _dbContext.Cars.Remove(car);
             await _dbContext.SaveChangesAsync();
