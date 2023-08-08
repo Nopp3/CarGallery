@@ -27,6 +27,8 @@ namespace CarGalleryAPI
 
             var app = builder.Build();
 
+            app.UseStaticFiles();
+
             app.UseCors(builder => builder.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
