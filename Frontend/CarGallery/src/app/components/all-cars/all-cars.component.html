@@ -1,5 +1,5 @@
 <div class="container">
-  <select class="form-select float-end w-25 m-2" (change)="onFilterChange()"
+  <select class="form-select float-end w-25 m-2" role="button" (change)="onFilterChange()"
           [(ngModel)]="filter" name="brandFilter" id="brand">
     <option [ngValue]="0">All brands</option>
     <option *ngFor="let brand of brands" [ngValue]="brand.id">{{ brand.name }}</option>

@@ -2,8 +2,8 @@
   <a class="btn btn-dark float-end m-2" (click)="addCar()">Add Car</a>
   <div *ngFor="let car of cars">
     <h1>{{ car.brand }} {{ car.model }} {{ car.productionYear }}
-      <a (click)="editCar(car.id)" class="fa-solid fa-pen-to-square m-2"></a>
-      <a (click)="deleteCar(car.id)" class="fa-solid fa-trash m-2"></a>
+      <a (click)="editCar(car.id)" role="button" class="fa-solid fa-pen-to-square m-2"></a>
+      <a (click)="deleteCar(car.id)" role="button" class="fa-solid fa-trash m-2"></a>
     </h1>
 
     <a data-bs-toggle="collapse" href="#{{ car.id }}" role="button">
