@@ -17,7 +17,7 @@
           <th scope="row">{{brand.id}}</th>
           <td class="row">
             <div class="col-10">{{brand.name}}</div>
-            <a (click)="deleteRow('brand', brand.id)" class="col-2 fa-solid fa-trash"></a>
+            <a (click)="deleteRow('brand', brand.id)" role="button" class="col-2 fa-solid fa-trash"></a>
           </td>
         </tr>
         </tbody>
@@ -42,7 +42,7 @@
           <th scope="row">{{body.id}}</th>
           <td class="row">
             <div class="col-10">{{body.type}}</div>
-            <a (click)="deleteRow('body', body.id)" class="col-2 fa-solid fa-trash"></a>
+            <a (click)="deleteRow('body', body.id)" role="button" class="col-2 fa-solid fa-trash"></a>
           </td>
         </tr>
         </tbody>
@@ -64,7 +64,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let user of users">
-            <th scope="row">{{user.id}}</th>
+            <th scope="row"><p class="user-select-all m-0">{{user.id}}</p></th>
 <!--            <td class="row">-->
               <div> <!--class="col-8">-->{{user.username}}</div>
 <!--              <a class="col-4 fa-solid fa-trash"></a>-->
