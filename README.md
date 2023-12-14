@@ -37,7 +37,7 @@ Database
 
 3. **Backend Setup**:
 - Navigate to the `Backend\CarGalleryAPI` folder and open the Visual Studio project.
-- Configure the MSSQL database connection in the `appsettings.json` file and `Data\DbCreator.cs` (if necessary) default server is `localhost` with windows authentication.
+- Configure the MSSQL database connection in the `appsettings.json` (if necessary) default server is `localhost` with windows authentication.
 - Run the backend project to start the API server (the database will be created on startup).
 
 4. **Frontend Setup**:

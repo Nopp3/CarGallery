@@ -1,18 +1,33 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using System.Data;
 
 namespace CarGalleryAPI.Data
 {
     public static class DbCreator
     {
-        private static SqlConnection connection = new SqlConnection("Server=localhost;Database=master;Integrated Security=True;TrustServerCertificate=true;");
+        private static SqlConnection connection;
         
         private static string dbExistSql = @"SELECT CASE WHEN DB_ID('CarGalleryDB') IS NULL THEN 0 ELSE 1 END";
 
+        public static void Initialize(IConfiguration configuration)
+        {
+            var server = configuration["DatabaseConnection:Server"];
+            var useWindowsAuthentication = configuration.GetValue<bool>("DatabaseConnection:useWindowsAuthentication");
+
+            if (useWindowsAuthentication)
+                connection = new SqlConnection($"Server={server};Integrated Security=True;TrustServerCertificate=true;");
+            else
+            {
+                var username = configuration["DatabaseConnection:Username"];
+                var password = configuration["DatabaseConnection:Password"];
+                connection = new SqlConnection($"Server={server};User Id={username};Password={password};TrustServerCertificate=true;");
+            }
+        }
         public static bool DoesDbExist()
         {
             SqlCommand sqlCommand = new SqlCommand(dbExistSql, connection);
-            
+
             connection.Open();
 
             int result = (int)sqlCommand.ExecuteScalar();
