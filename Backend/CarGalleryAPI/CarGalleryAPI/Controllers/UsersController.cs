@@ -21,7 +21,6 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet]
-        //[Route("{id:Guid}")]
         public async Task<IActionResult> GetUser([FromQuery(Name = "id")] Guid id)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.id == id);
