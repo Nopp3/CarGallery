@@ -42,7 +42,7 @@ namespace CarGalleryAPI.Data
 
         public static void CreateDatabase()
         {
-            string sqlQuery = File.ReadAllText("initial.sql");
+            string sqlQuery = File.ReadAllText("Initial.sql");
 
             SqlCommand sqlCommand = new SqlCommand("CREATE DATABASE CarGalleryDB;", connection);
 
