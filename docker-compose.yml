@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: ./Frontend/CarGallery
+      dockerfile: Dockerfile
+    restart: unless-stopped
+  backend:
+    build:
+      context: ./Backend/CarGalleryAPI
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DatabaseConnection__Server: sqlserver,1433
+      DatabaseConnection__useWindowsAuthentication: "false"
+      DatabaseConnection__Username: sa
+      DatabaseConnection__Password: ${MSSQL_SA_PASSWORD}
+    depends_on:
+      - sqlserver
+    restart: unless-stopped
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge:1.0.7
+    environment:
+      ACCEPT_EULA: "1"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_PID: Developer
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    restart: unless-stopped
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  sqlserver-data:
