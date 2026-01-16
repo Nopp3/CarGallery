@@ -37,6 +37,7 @@ namespace CarGalleryAPI
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddMvc();
+            builder.Services.AddHealthChecks();
 
             var app = builder.Build();
 
@@ -57,8 +58,8 @@ namespace CarGalleryAPI
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+            app.MapHealthChecks("/health");
 
             app.Run();
         }
