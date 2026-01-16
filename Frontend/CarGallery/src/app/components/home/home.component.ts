@@ -21,6 +21,7 @@ export class HomeComponent {
   ngOnInit(){
     if (SessionService.get("ActiveUser") == null){
       this.router.navigate(['login'])
+      return
     }
     this.carService.getUserCars()
       .subscribe({
