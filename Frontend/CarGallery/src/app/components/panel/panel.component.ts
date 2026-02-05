@@ -20,33 +20,42 @@ export class PanelComponent {
   constructor(private route: Router, private carService: CarService,
               private userService: UserService) {}
   ngOnInit(){
-    if (SessionService.get("ActiveUser") == null){
+    const activeUser = SessionService.get('ActiveUser')
+    if (activeUser == null){
       this.route.navigate(['login'])
+      return
     }
-    this.userService.getUser(SessionService.get('ActiveUser'))
+
+    this.userService.getUser(activeUser)
       .subscribe({
         next: user => {
-          if (user.role_id != 1){
-            this.route.navigate(['home']);
+          const isAdmin = user.role_id == 1 || user.role_id == 2
+          if (!isAdmin){
+            this.route.navigate(['home'])
+            return
           }
-        }
-      })
-    this.carService.getBrands()
-      .subscribe({
-        next: value => {
-          this.brands = value
-        }
-      })
-    this.carService.getBodies()
-      .subscribe({
-        next: value => {
-          this.bodies = value
-        }
-      })
-    this.userService.getUsers()
-      .subscribe({
-        next: value => {
-          this.users = value
+
+          this.carService.getBrands()
+            .subscribe({
+              next: value => {
+                this.brands = value
+              }
+            })
+          this.carService.getBodies()
+            .subscribe({
+              next: value => {
+                this.bodies = value
+              }
+            })
+          this.userService.getUsers()
+            .subscribe({
+              next: value => {
+                this.users = value
+              }
+            })
+        },
+        error: () => {
+          this.route.navigate(['login'])
         }
       })
   }

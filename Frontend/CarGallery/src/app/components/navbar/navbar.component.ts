@@ -24,7 +24,7 @@ import { UserService } from "../../services/user/user.service";
               <a class="nav-link" aria-current="page"
                  routerLink="all" routerLinkActive="active">All</a>
             </li>
-            <li *ngIf="this.role == 1" class="nav-item">
+            <li *ngIf="this.role == 1 || this.role == 2" class="nav-item">
               <a class="nav-link" aria-current="page"
                  routerLink="panel" routerLinkActive="active">
                 <i class="fa-solid fa-lock" aria-current="page" routerLink="panel"></i>
