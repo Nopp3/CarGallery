@@ -1,4 +1,5 @@
 ﻿using CarGalleryAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using CarGalleryAPI.Controllers.Models;
@@ -21,6 +22,7 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "HeadAdmin,Admin")]
         public async Task<IActionResult> AddBody([FromBody] Body bodyRequest)
         {
             if (_dbContext.Bodies.Where(x => x.type == bodyRequest.type).Any())
@@ -36,6 +38,7 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "HeadAdmin,Admin")]
         public async Task<IActionResult> RemoveBody([FromQuery] int id)
         {
             var body = await _dbContext.Bodies.FindAsync(id);

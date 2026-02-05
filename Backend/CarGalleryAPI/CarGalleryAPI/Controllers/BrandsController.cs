@@ -1,4 +1,5 @@
 ﻿using CarGalleryAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using CarGalleryAPI.Controllers.Models;
@@ -31,6 +32,7 @@ namespace CarGalleryAPI.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "HeadAdmin,Admin")]
         public async Task<IActionResult> AddBrand([FromBody] Brand brandRequest)
         {
             if (_dbContext.Brands.Where(x => x.name == brandRequest.name).Any())
@@ -46,6 +48,7 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "HeadAdmin,Admin")]
         public async Task<IActionResult> RemoveBrand([FromQuery] int id)
         {
             var brand = await _dbContext.Brands.FindAsync(id);
