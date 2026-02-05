@@ -29,15 +29,22 @@ export class LoginComponent {
     SessionService.clear()
     this.userService.loginUser(this.loginRequest)
       .subscribe({
-        next: (guid) => {
-          SessionService.set("ActiveUser", guid)
+        next: (auth) => {
+          SessionService.set("AccessToken", auth.accessToken)
+          SessionService.set("ActiveUser", auth.userId)
           this.sharedService.emitRefreshEvent()
           this.router.navigate(['home'])
         },
         error: (response) => {
           if (this.loginRequest.username != '' &&
               this.loginRequest.password != '') {
-            this.messageBoxText = response.error;
+            if (response.status == 401) {
+              this.messageBoxText = "Invalid username or password";
+            } else if (typeof response.error === "string" && response.error.length > 0) {
+              this.messageBoxText = response.error;
+            } else {
+              this.messageBoxText = "Login failed";
+            }
             this.displayMessageBox = true;
           }
         }
