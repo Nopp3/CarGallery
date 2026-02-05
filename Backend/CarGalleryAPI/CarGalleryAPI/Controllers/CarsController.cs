@@ -1,8 +1,10 @@
 ﻿using CarGalleryAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using CarGalleryAPI.Controllers.Models;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,6 +20,18 @@ namespace CarGalleryAPI.Controllers
         {
             _dbContext = dbContext;
             _env = env;
+        }
+
+        private bool TryGetAuthenticatedUserId(out Guid userId)
+        {
+            userId = Guid.Empty;
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Guid.TryParse(userIdValue, out userId);
+        }
+
+        private bool IsAdmin()
+        {
+            return User.IsInRole(Roles.HeadAdmin.ToString()) || User.IsInRole(Roles.Admin.ToString());
         }
 
         [HttpGet("all")]
@@ -133,8 +147,12 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddCar()
         {
+            if (!TryGetAuthenticatedUserId(out var currentUserId))
+                return Unauthorized();
+
             var formCollection = await Request.ReadFormAsync();
 
             //Upload File
@@ -153,7 +171,10 @@ namespace CarGalleryAPI.Controllers
             //Add Car
             var carJson = formCollection["carRequest"];
             var carRequest = JsonSerializer.Deserialize<Car>(carJson);
+            if (carRequest == null)
+                return BadRequest();
             carRequest.id = Guid.NewGuid();
+            carRequest.user_id = currentUserId;
             carRequest.imagePath = $@"/images/{uniqueImgName}";
             await _dbContext.AddAsync(carRequest);
             await _dbContext.SaveChangesAsync();
@@ -163,8 +184,13 @@ namespace CarGalleryAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateCar([FromRoute] Guid id)
         {
+            if (!TryGetAuthenticatedUserId(out var currentUserId))
+                return Unauthorized();
+            var isAdmin = IsAdmin();
+
             var formCollection = await Request.ReadFormAsync();
             string updateImagePath = "";
             var file = formCollection.Files.GetFile("image");
@@ -183,10 +209,14 @@ namespace CarGalleryAPI.Controllers
 
             var carJson = formCollection["updateCarRequest"];
             var updateCarRequest = JsonSerializer.Deserialize<Car>(carJson);
+            if (updateCarRequest == null)
+                return BadRequest();
             var car = await _dbContext.Cars.FindAsync(id);
 
             if (car == null)
                 return NotFound();
+            if (!isAdmin && car.user_id != currentUserId)
+                return Forbid();
             if (updateImagePath == "")
             {
                 updateImagePath = updateCarRequest.imagePath;
@@ -210,12 +240,19 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> DeleteCar([FromQuery] Guid id)
         {
+            if (!TryGetAuthenticatedUserId(out var currentUserId))
+                return Unauthorized();
+            var isAdmin = IsAdmin();
+
             var car = await _dbContext.Cars.FindAsync(id);
 
             if (car == null)
                 return NotFound();
+            if (!isAdmin && car.user_id != currentUserId)
+                return Forbid();
 
             System.IO.File.Delete(_env.WebRootPath + car.imagePath.Replace('/', '\\'));
 
