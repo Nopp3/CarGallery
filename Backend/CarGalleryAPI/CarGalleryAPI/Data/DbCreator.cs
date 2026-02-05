@@ -86,7 +86,7 @@ namespace CarGalleryAPI.Data
                 sqlCommand.ExecuteNonQuery();
             }
             sqlCommand = new SqlCommand("INSERT INTO Users (id, role_id, username, email, password) " +
-                "VALUES (NEWID(), 1, 'admin', 'support@cargallery.com', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918');", connection);
+                "VALUES (NEWID(), 1, 'admin', 'support@cargallery.com', '$2y$12$B/wnoI3zPSj/ENr4HE0WKOtMK3RSoLAosIogNHg3x1i9SRVeaLJEi');", connection);
             sqlCommand.ExecuteNonQuery();
         }
     }

@@ -37,9 +37,10 @@ namespace CarGalleryAPI.Controllers
             {
                 var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == loginRequest.username);
 
-                if (user.password == Hash.Encrypt(loginRequest.password))
+                if (Hash.VerifyPassword(loginRequest.password, user.password))
                     return Ok(user.id);
-                else return BadRequest("Invalid password");
+
+                return BadRequest("Invalid password");
             }
             return NotFound($"Can't find user: {loginRequest.username}");
         }
@@ -56,7 +57,7 @@ namespace CarGalleryAPI.Controllers
 
                 userRequest.id = Guid.NewGuid();
                 userRequest.role_id = (int)Roles.User;
-                userRequest.password = Hash.Encrypt(userRequest.password);
+                userRequest.password = Hash.HashPassword(userRequest.password);
 
                 if (!userRequest.email.Contains('@'))
                     userRequest.email = null;

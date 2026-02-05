@@ -1,18 +1,24 @@
-﻿using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace CarGalleryAPI.Data
+﻿namespace CarGalleryAPI.Data
 {
     public static class Hash
     {
-        public static string Encrypt(string password)
+        public static string HashPassword(string password)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        public static bool VerifyPassword(string password, string storedHash)
+        {
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(storedHash))
+                return false;
+
+            try
             {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-                return hash;
+                return BCrypt.Net.BCrypt.Verify(password, storedHash);
+            }
+            catch
+            {
+                return false;
             }
         }
     }
