@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router} from "@angular/router";
 import { SessionService } from "../../services/session/session.service";
 import { SharedService } from "../../services/shared/shared.service";
-import { UserService } from "../../services/user/user.service";
 
 @Component({
   selector: 'navbar',
@@ -24,7 +23,7 @@ import { UserService } from "../../services/user/user.service";
               <a class="nav-link" aria-current="page"
                  routerLink="all" routerLinkActive="active">All</a>
             </li>
-            <li *ngIf="this.role == 1 || this.role == 2" class="nav-item">
+            <li *ngIf="isAdmin" class="nav-item">
               <a class="nav-link" aria-current="page"
                  routerLink="panel" routerLinkActive="active">
                 <i class="fa-solid fa-lock" aria-current="page" routerLink="panel"></i>
@@ -39,20 +38,20 @@ import { UserService } from "../../services/user/user.service";
 })
 export class NavbarComponent {
   title = 'Navbar';
-  role = 0;
-  constructor(private router: Router, private sharedService: SharedService,
-              private userService: UserService) {}
+  isAdmin = false;
+  constructor(private router: Router, private sharedService: SharedService) {}
   ngOnInit(){
-    this.userService.getUser(SessionService.get('ActiveUser'))
-      .subscribe({
-        next: user => {
-          this.role = user.role_id;
-        }
-      })
+    this.updateAdminState()
+    this.sharedService.refreshEvent.subscribe(() => this.updateAdminState())
   }
   Logout(){
     SessionService.clear()
     this.sharedService.emitRefreshEvent()
     this.router.navigate(['login'])
+  }
+
+  private updateAdminState(){
+    const role = SessionService.getRole()
+    this.isAdmin = role === 'HeadAdmin' || role === 'Admin'
   }
 }
