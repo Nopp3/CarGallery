@@ -70,21 +70,6 @@ namespace CarGalleryAPI.Controllers
             else return Ok(user);
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody] Login loginRequest)
-        {
-            if (_dbContext.Users.Where(x => x.username == loginRequest.username).Any())
-            {
-                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == loginRequest.username);
-
-                if (Hash.VerifyPassword(loginRequest.password, user.password))
-                    return Ok(user.id);
-
-                return BadRequest("Invalid password");
-            }
-            return NotFound($"Can't find user: {loginRequest.username}");
-        }
-
         [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] User userRequest)
         {
