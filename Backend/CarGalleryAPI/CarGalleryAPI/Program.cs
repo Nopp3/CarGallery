@@ -1,11 +1,13 @@
 using CarGalleryAPI.Auth;
 using CarGalleryAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace CarGalleryAPI
 {
@@ -113,10 +115,41 @@ namespace CarGalleryAPI
             }
 
             app.UseHttpsRedirection();
+            
+            app.UseStatusCodePages(async statusCodeContext =>
+            {
+                var httpContext = statusCodeContext.HttpContext;
+                var response = httpContext.Response;
+
+                if (response.StatusCode is not StatusCodes.Status401Unauthorized and not StatusCodes.Status403Forbidden)
+                    return;
+
+                if (!httpContext.Request.Path.StartsWithSegments("/api"))
+                    return;
+
+                if (response.HasStarted || !string.IsNullOrEmpty(response.ContentType))
+                    return;
+
+                var isUnauthorized = response.StatusCode == StatusCodes.Status401Unauthorized;
+
+                var problemDetails = new ProblemDetails
+                {
+                    Title = isUnauthorized ? "Unauthorized" : "Forbidden",
+                    Status = response.StatusCode,
+                    Detail = isUnauthorized
+                        ? "Authentication is required to access this resource."
+                        : "You do not have permission to access this resource.",
+                    Instance = httpContext.Request.Path
+                };
+                problemDetails.Extensions["traceId"] = httpContext.TraceIdentifier;
+
+                response.ContentType = "application/problem+json";
+                await response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.MapControllers();
             app.MapHealthChecks("/health");
 
