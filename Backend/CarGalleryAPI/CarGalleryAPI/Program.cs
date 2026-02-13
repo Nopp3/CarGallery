@@ -77,7 +77,6 @@ namespace CarGalleryAPI
                 throw new InvalidOperationException("Jwt:SigningKey must be set and at least 32 characters. Set it via env var Jwt__SigningKey.");
 
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey));
-            const string authCookieName = "cg_access_token";
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -93,7 +92,7 @@ namespace CarGalleryAPI
                             if (context.Request.Headers.ContainsKey("Authorization"))
                                 return Task.CompletedTask;
 
-                            if (context.Request.Cookies.TryGetValue(authCookieName, out var cookieToken)
+                            if (context.Request.Cookies.TryGetValue(JwtOptions.AccessTokenCookieName, out var cookieToken)
                                 && !string.IsNullOrWhiteSpace(cookieToken))
                             {
                                 context.Token = cookieToken;

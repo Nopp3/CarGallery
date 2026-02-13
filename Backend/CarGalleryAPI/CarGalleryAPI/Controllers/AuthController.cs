@@ -63,6 +63,15 @@ namespace CarGalleryAPI.Controllers
                 signingCredentials: creds);
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+            Response.Cookies.Append(JwtOptions.AccessTokenCookieName, accessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = HttpContext.Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Expires = expiresAtUtc,
+                Path = "/",
+                IsEssential = true
+            });
 
             return Ok(new AuthResponse
             {
@@ -73,6 +82,20 @@ namespace CarGalleryAPI.Controllers
                 username = user.username,
                 role = role
             });
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete(JwtOptions.AccessTokenCookieName, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = HttpContext.Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Path = "/",
+                IsEssential = true
+            });
+            return Ok();
         }
 
         public class AuthResponse
