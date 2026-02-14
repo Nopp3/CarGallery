@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router} from "@angular/router";
 import { SessionService } from "../../services/session/session.service";
 import { SharedService } from "../../services/shared/shared.service";
+import { UserService } from "../../services/user/user.service";
 
 @Component({
   selector: 'navbar',
@@ -39,19 +40,42 @@ import { SharedService } from "../../services/shared/shared.service";
 export class NavbarComponent {
   title = 'Navbar';
   isAdmin = false;
-  constructor(private router: Router, private sharedService: SharedService) {}
+  constructor(private router: Router, private sharedService: SharedService,
+              private userService: UserService) {}
   ngOnInit(){
     this.updateAdminState()
     this.sharedService.refreshEvent.subscribe(() => this.updateAdminState())
   }
   Logout(){
-    SessionService.clear()
-    this.sharedService.emitRefreshEvent()
-    this.router.navigate(['login'])
+    this.userService.logout()
+      .subscribe({
+        next: () => this.finishLogout(),
+        error: () => this.finishLogout()
+      })
   }
 
   private updateAdminState(){
-    const role = SessionService.getRole()
-    this.isAdmin = role === 'HeadAdmin' || role === 'Admin'
+    const activeUser = SessionService.get("ActiveUser")
+    if (activeUser == null){
+      this.isAdmin = false
+      return
+    }
+
+    this.userService.me()
+      .subscribe({
+        next: authUser => {
+          SessionService.set("ActiveUser", authUser.userId)
+          this.isAdmin = authUser.role === "HeadAdmin" || authUser.role === "Admin"
+        },
+        error: () => {
+          this.isAdmin = false
+        }
+      })
+  }
+
+  private finishLogout(){
+    SessionService.clear()
+    this.sharedService.emitRefreshEvent()
+    this.router.navigate(['login'])
   }
 }

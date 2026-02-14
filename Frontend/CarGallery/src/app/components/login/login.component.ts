@@ -30,7 +30,6 @@ export class LoginComponent {
     this.userService.loginUser(this.loginRequest)
       .subscribe({
         next: (auth) => {
-          SessionService.set("AccessToken", auth.accessToken)
           SessionService.set("ActiveUser", auth.userId)
           this.sharedService.emitRefreshEvent()
           this.router.navigate(['home'])

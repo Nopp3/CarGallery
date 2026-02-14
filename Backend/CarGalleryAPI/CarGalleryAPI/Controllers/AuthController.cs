@@ -1,6 +1,7 @@
 ﻿using CarGalleryAPI.Auth;
 using CarGalleryAPI.Controllers.Models;
 using CarGalleryAPI.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -96,6 +97,34 @@ namespace CarGalleryAPI.Controllers
                 IsEssential = true
             });
             return Ok();
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult Me()
+        {
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var username = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out var userId))
+                return Unauthorized();
+            if (string.IsNullOrWhiteSpace(role))
+                return Unauthorized();
+
+            return Ok(new AuthUserResponse
+            {
+                userId = userId,
+                username = username,
+                role = role
+            });
+        }
+
+        public class AuthUserResponse
+        {
+            public Guid userId { get; set; }
+            public string username { get; set; }
+            public string role { get; set; }
         }
 
         public class AuthResponse

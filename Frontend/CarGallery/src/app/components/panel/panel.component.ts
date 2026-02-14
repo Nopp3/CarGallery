@@ -20,36 +20,42 @@ export class PanelComponent {
   constructor(private route: Router, private carService: CarService,
               private userService: UserService) {}
   ngOnInit(){
-    const activeUser = SessionService.get('ActiveUser')
-    const accessToken = SessionService.getAccessToken()
-    if (activeUser == null || accessToken == null){
-      this.route.navigate(['login'])
-      return
-    }
+    this.userService.me()
+      .subscribe({
+        next: authUser => {
+          SessionService.set("ActiveUser", authUser.userId)
+          const isAdmin = authUser.role === "HeadAdmin" || authUser.role === "Admin"
+          if (!isAdmin){
+            this.route.navigate(['home'])
+            return
+          }
 
-    const role = SessionService.getRole()
-    const isAdmin = role === 'HeadAdmin' || role === 'Admin'
-    if (!isAdmin){
-      this.route.navigate(['home'])
-      return
-    }
-
-    this.carService.getBrands()
-      .subscribe({
-        next: value => {
-          this.brands = value
-        }
-      })
-    this.carService.getBodies()
-      .subscribe({
-        next: value => {
-          this.bodies = value
-        }
-      })
-    this.userService.getUsers()
-      .subscribe({
-        next: value => {
-          this.users = value
+          this.carService.getBrands()
+            .subscribe({
+              next: value => {
+                this.brands = value
+              }
+            })
+          this.carService.getBodies()
+            .subscribe({
+              next: value => {
+                this.bodies = value
+              }
+            })
+          this.userService.getUsers()
+            .subscribe({
+              next: value => {
+                this.users = value
+              }
+            })
+        },
+        error: (response) => {
+          if (response.status === 401 || response.status === 403){
+            SessionService.clear()
+            this.route.navigate(['login'])
+            return
+          }
+          this.route.navigate(['home'])
         }
       })
   }
