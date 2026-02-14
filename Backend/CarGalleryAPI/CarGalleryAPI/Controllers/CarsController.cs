@@ -109,6 +109,42 @@ namespace CarGalleryAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetMyCars()
+        {
+            if (!TryGetAuthenticatedUserId(out var currentUserId))
+                return Unauthorized();
+
+            List<Car> Cars = await _dbContext.Cars.ToListAsync();
+            #region LINQ query
+            var query = from car in Cars.Where(x => x.user_id == currentUserId)
+                        join user in _dbContext.Users on car.user_id equals user.id into userJoin
+                        from user in userJoin.DefaultIfEmpty()
+                        join fuel in _dbContext.Fuels on car.fuel_id equals fuel.id into fuelJoin
+                        from fuel in fuelJoin.DefaultIfEmpty()
+                        join body in _dbContext.Bodies on car.body_id equals body.id into bodyJoin
+                        from body in bodyJoin.DefaultIfEmpty()
+                        join brand in _dbContext.Brands on car.brand_id equals brand.id into brandJoin
+                        from brand in brandJoin.DefaultIfEmpty()
+                        select new
+                        {
+                            car.id,
+                            user.username,
+                            fuel = fuel.type,
+                            body = body.type,
+                            brand = brand.name,
+                            car.model,
+                            car.productionYear,
+                            car.engine,
+                            car.horsePower,
+                            car.imagePath
+                        };
+            #endregion
+            var result = query.ToList();
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("brand")]
         public async Task<IActionResult> GetCarsByBrand([FromQuery] int id)

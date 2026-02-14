@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { CarUI, Car, Body, Brand, Fuel } from "../../models/car.model";
-import { SessionService } from "../session/session.service";
 
 import { environment } from "../../environment";
 
@@ -18,8 +17,11 @@ export class CarService {
   getAllCars(): Observable<CarUI[]>{
     return this.http.get<CarUI[]>(this.baseApiUrl + '/Cars/all')
   }
-  getUserCars(): Observable<CarUI[]>{
-    return this.http.get<CarUI[]>(this.baseApiUrl + '/Cars/user?id=' + SessionService.get("ActiveUser"))
+  getMyCars(): Observable<CarUI[]>{
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/Cars/me')
+  }
+  getUserCars(userId: string): Observable<CarUI[]>{
+    return this.http.get<CarUI[]>(this.baseApiUrl + '/Cars/user?id=' + userId)
   }
   getCarsByBrand(brandIdRequest: number): Observable<CarUI[]> {
     return this.http.get<CarUI[]>(this.baseApiUrl + '/Cars/brand?id=' + brandIdRequest)
