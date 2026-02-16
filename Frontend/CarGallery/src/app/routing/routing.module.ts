@@ -6,6 +6,9 @@ import { HomeComponent } from "../components/home/home.component";
 import { AllCarsComponent } from "../components/all-cars/all-cars.component";
 import { SignupComponent } from "../components/signup/signup.component";
 import { PanelComponent } from "../components/panel/panel.component";
+import { authGuard } from "./auth.guard";
+import { adminGuard } from "./admin.guard";
+import { guestGuard } from "./guest.guard";
 
 const routes: Routes = [
   {
@@ -15,23 +18,28 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [guestGuard]
   },
   {
     path: 'signUp',
-    component: SignupComponent
+    component: SignupComponent,
+    canActivate: [guestGuard]
   },
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'all',
-    component: AllCarsComponent
+    component: AllCarsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'panel',
-    component: PanelComponent
+    component: PanelComponent,
+    canActivate: [adminGuard]
   },
 ];
 @NgModule({

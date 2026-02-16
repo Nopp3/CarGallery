@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SessionService } from "../../services/session/session.service";
 import { Router } from "@angular/router";
 import { CarUI } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
@@ -19,11 +18,7 @@ export class HomeComponent {
   cars: CarUI[] = []
   apiUrl: string = environment.baseApiUrl
   ngOnInit(){
-    if (SessionService.get("ActiveUser") == null){
-      this.router.navigate(['login'])
-      return
-    }
-    this.carService.getUserCars()
+    this.carService.getMyCars()
       .subscribe({
         next: value => this.cars = value
       })

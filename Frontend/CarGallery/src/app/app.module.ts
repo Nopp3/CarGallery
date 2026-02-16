@@ -38,7 +38,8 @@ import { EditCarComponent } from "./components/car-form/edit-car.component";
     MatDialogModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

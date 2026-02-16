@@ -1,4 +1,4 @@
-<navbar *ngIf="this.userLogged != null"></navbar>
+<navbar *ngIf="authState.isLoggedIn$ | async"></navbar>
 <router-outlet></router-outlet>
 <footer class="py-3 mt-auto">
 	<div class="container text-center">

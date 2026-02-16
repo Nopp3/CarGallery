@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { SessionService } from "../../services/session/session.service";
 import { Router } from "@angular/router";
 import { CarService } from "../../services/car/car.service";
 import { Brand, Body } from "../../models/car.model";
 import { UserService } from "../../services/user/user.service";
 import { User } from "../../models/user.model";
+import { AuthStateService } from "../../services/auth-state/auth-state.service";
 
 @Component({
   selector: 'app-panel',
@@ -18,37 +18,40 @@ export class PanelComponent {
   newBrand: string = ''
   newBody: string = ''
   constructor(private route: Router, private carService: CarService,
-              private userService: UserService) {}
+              private userService: UserService,
+              private authState: AuthStateService) {}
   ngOnInit(){
-    if (SessionService.get("ActiveUser") == null){
-      this.route.navigate(['login'])
-    }
-    this.userService.getUser(SessionService.get('ActiveUser'))
-      .subscribe({
-        next: user => {
-          if (user.role_id != 1){
-            this.route.navigate(['home']);
+    this.authState.ensureLoaded().subscribe(authUser => {
+      if (authUser == null) {
+        this.route.navigate(['login'])
+        return
+      }
+
+      const isAdmin = authUser.role === "HeadAdmin" || authUser.role === "Admin"
+      if (!isAdmin){
+        this.route.navigate(['home'])
+        return
+      }
+
+      this.carService.getBrands()
+        .subscribe({
+          next: value => {
+            this.brands = value
           }
-        }
-      })
-    this.carService.getBrands()
-      .subscribe({
-        next: value => {
-          this.brands = value
-        }
-      })
-    this.carService.getBodies()
-      .subscribe({
-        next: value => {
-          this.bodies = value
-        }
-      })
-    this.userService.getUsers()
-      .subscribe({
-        next: value => {
-          this.users = value
-        }
-      })
+        })
+      this.carService.getBodies()
+        .subscribe({
+          next: value => {
+            this.bodies = value
+          }
+        })
+      this.userService.getUsers()
+        .subscribe({
+          next: value => {
+            this.users = value
+          }
+        })
+    })
   }
   deleteRow(table: string, id: number){
     switch (table){

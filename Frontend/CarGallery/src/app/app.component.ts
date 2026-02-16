@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { SessionService } from "./services/session/session.service";
-import { SharedService } from "./services/shared/shared.service";
+import { AuthStateService } from "./services/auth-state/auth-state.service";
 
 @Component({
   selector: 'app-root',
@@ -8,11 +7,8 @@ import { SharedService } from "./services/shared/shared.service";
 })
 export class AppComponent {
   title = 'CarGallery';
-  userLogged = SessionService.get("ActiveUser")
-  constructor(private sharedService: SharedService) {}
+  constructor(public authState: AuthStateService) {}
   ngOnInit() {
-    this.sharedService.refreshEvent.subscribe(() => {
-      this.userLogged = SessionService.get("ActiveUser")
-    });
+    this.authState.ensureLoaded().subscribe();
   }
 }

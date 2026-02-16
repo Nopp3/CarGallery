@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { Login, User } from "../../models/user.model";
+import { AuthResponse, AuthUserResponse, Login, User } from "../../models/user.model";
 
 import { environment } from "../../environment";
 @Injectable({
@@ -18,8 +18,14 @@ export class UserService {
   getUser(userGuid : string) : Observable<User>{
     return this.http.get<User>(this.baseApiUrl+'/Users/?id=' + userGuid)
   }
-  loginUser(loginRequest: Login) : Observable<User>{
-    return this.http.post<User>(this.baseApiUrl + '/Users/login', loginRequest)
+  loginUser(loginRequest: Login) : Observable<AuthResponse>{
+    return this.http.post<AuthResponse>(this.baseApiUrl + '/auth/login', loginRequest)
+  }
+  me() : Observable<AuthUserResponse | null>{
+    return this.http.get<AuthUserResponse | null>(this.baseApiUrl + '/auth/me')
+  }
+  logout() : Observable<void>{
+    return this.http.post<void>(this.baseApiUrl + '/auth/logout', {})
   }
   addUser(addUserRequest: User): Observable<User>{
     addUserRequest.id = '00000000-0000-0000-0000-000000000000';

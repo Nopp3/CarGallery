@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { SessionService } from "../../services/session/session.service";
 import { Body, Brand, Car, Fuel } from "../../models/car.model";
 import { CarService } from "../../services/car/car.service";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -46,7 +45,6 @@ export class AddCarComponent {
     })
   }
   addEditCar(){
-    this.carRequest.user_id = SessionService.get("ActiveUser")
     if (this.carRequest.fuel_id == 0 || this.carRequest.body_id == 0 || this.carRequest.brand_id == 0 || !this.fileRequest){
       this.displayMessageBox = true
       this.messageBoxText = 'Something was not selected'

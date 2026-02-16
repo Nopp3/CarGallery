@@ -14,6 +14,10 @@ services:
       DatabaseConnection__useWindowsAuthentication: "false"
       DatabaseConnection__Username: sa
       DatabaseConnection__Password: ${MSSQL_SA_PASSWORD}
+      Jwt__Issuer: CarGalleryAPI
+      Jwt__Audience: CarGalleryFrontend
+      Jwt__SigningKey: ${JWT_SIGNING_KEY}
+      Jwt__AccessTokenMinutes: "60"
     depends_on:
       - sqlserver
     restart: unless-stopped
