@@ -100,17 +100,19 @@ namespace CarGalleryAPI.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize]
         public IActionResult Me()
         {
+            if (User?.Identity?.IsAuthenticated != true)
+                return Ok(null);
+
             var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var username = User.FindFirstValue(ClaimTypes.Name) ?? string.Empty;
             var role = User.FindFirstValue(ClaimTypes.Role);
 
             if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out var userId))
-                return Unauthorized();
+                return Ok(null);
             if (string.IsNullOrWhiteSpace(role))
-                return Unauthorized();
+                return Ok(null);
 
             return Ok(new AuthUserResponse
             {

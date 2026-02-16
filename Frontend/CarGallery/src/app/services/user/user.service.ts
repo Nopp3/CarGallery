@@ -21,8 +21,8 @@ export class UserService {
   loginUser(loginRequest: Login) : Observable<AuthResponse>{
     return this.http.post<AuthResponse>(this.baseApiUrl + '/auth/login', loginRequest)
   }
-  me() : Observable<AuthUserResponse>{
-    return this.http.get<AuthUserResponse>(this.baseApiUrl + '/auth/me')
+  me() : Observable<AuthUserResponse | null>{
+    return this.http.get<AuthUserResponse | null>(this.baseApiUrl + '/auth/me')
   }
   logout() : Observable<void>{
     return this.http.post<void>(this.baseApiUrl + '/auth/logout', {})

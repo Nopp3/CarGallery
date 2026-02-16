@@ -30,7 +30,8 @@ const routes: Routes = [
   },
   {
     path: 'all',
-    component: AllCarsComponent
+    component: AllCarsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'panel',

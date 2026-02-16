@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from "@angular/router";
-import { SessionService } from "../../services/session/session.service";
 import { CarService } from "../../services/car/car.service";
 import { Brand, CarUI } from "../../models/car.model";
 import { environment } from 'src/app/environment';
@@ -11,7 +9,7 @@ import { environment } from 'src/app/environment';
   styleUrls: ['./all-cars.component.css']
 })
 export class AllCarsComponent {
-  constructor(private router: Router, private carService: CarService) {}
+  constructor(private carService: CarService) {}
 
   cars: CarUI[] = []
   apiUrl: string = environment.baseApiUrl
@@ -19,9 +17,6 @@ export class AllCarsComponent {
   filter: number = 0
 
   ngOnInit(){
-    if (SessionService.get("ActiveUser") == null){
-      this.router.navigate(['login'])
-    }
     this.carService.getAllCars()
       .subscribe({
         next: value => this.cars = value

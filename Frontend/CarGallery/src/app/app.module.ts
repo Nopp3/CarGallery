@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RoutingModule } from "./routing/routing.module";
 import { FormsModule } from "@angular/forms";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
 
 import { AppComponent } from './app.component';
@@ -16,7 +16,6 @@ import { PanelFormComponent } from "./components/panel/panel-form.component";
 import { AddCarComponent } from "./components/car-form/add-car.component";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EditCarComponent } from "./components/car-form/edit-car.component";
-import { AuthInterceptor } from "./interceptors/auth.interceptor";
 
 @NgModule({
   declarations: [
@@ -40,7 +39,6 @@ import { AuthInterceptor } from "./interceptors/auth.interceptor";
     BrowserAnimationsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

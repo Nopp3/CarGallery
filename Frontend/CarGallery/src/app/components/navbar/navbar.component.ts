@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Router} from "@angular/router";
-import { SessionService } from "../../services/session/session.service";
-import { SharedService } from "../../services/shared/shared.service";
-import { UserService } from "../../services/user/user.service";
+import { AuthStateService } from "../../services/auth-state/auth-state.service";
 
 @Component({
   selector: 'navbar',
@@ -24,7 +22,7 @@ import { UserService } from "../../services/user/user.service";
               <a class="nav-link" aria-current="page"
                  routerLink="all" routerLinkActive="active">All</a>
             </li>
-            <li *ngIf="isAdmin" class="nav-item">
+            <li *ngIf="authState.isAdmin$ | async" class="nav-item">
               <a class="nav-link" aria-current="page"
                  routerLink="panel" routerLinkActive="active">
                 <i class="fa-solid fa-lock" aria-current="page" routerLink="panel"></i>
@@ -39,43 +37,10 @@ import { UserService } from "../../services/user/user.service";
 })
 export class NavbarComponent {
   title = 'Navbar';
-  isAdmin = false;
-  constructor(private router: Router, private sharedService: SharedService,
-              private userService: UserService) {}
-  ngOnInit(){
-    this.updateAdminState()
-    this.sharedService.refreshEvent.subscribe(() => this.updateAdminState())
-  }
+  constructor(private router: Router, public authState: AuthStateService) {}
   Logout(){
-    this.userService.logout()
-      .subscribe({
-        next: () => this.finishLogout(),
-        error: () => this.finishLogout()
-      })
-  }
-
-  private updateAdminState(){
-    const activeUser = SessionService.get("ActiveUser")
-    if (activeUser == null){
-      this.isAdmin = false
-      return
-    }
-
-    this.userService.me()
-      .subscribe({
-        next: authUser => {
-          SessionService.set("ActiveUser", authUser.userId)
-          this.isAdmin = authUser.role === "HeadAdmin" || authUser.role === "Admin"
-        },
-        error: () => {
-          this.isAdmin = false
-        }
-      })
-  }
-
-  private finishLogout(){
-    SessionService.clear()
-    this.sharedService.emitRefreshEvent()
-    this.router.navigate(['login'])
+    this.authState.logout().subscribe(() => {
+      this.router.navigate(['login'])
+    })
   }
 }

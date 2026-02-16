@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from "@angular/router";
 import { Login } from "../../models/user.model";
 import { UserService } from "../../services/user/user.service";
-import { SessionService } from "../../services/session/session.service";
-import { SharedService } from "../../services/shared/shared.service";
+import { AuthStateService } from "../../services/auth-state/auth-state.service";
 
 @Component({
   selector: 'app-login',
@@ -18,20 +17,20 @@ export class LoginComponent {
   displayMessageBox = false;
   messageBoxText = "";
   constructor(private userService: UserService, private router: Router,
-              private sharedService : SharedService) { }
+              private authState: AuthStateService) { }
   ngOnInit(){
-    if (SessionService.get("ActiveUser") != null){
-      this.router.navigate(['home'])
-    }
+    this.authState.ensureLoaded().subscribe(user => {
+      if (user != null) {
+        this.router.navigate(['home'])
+      }
+    })
     this.displayMessageBox = false;
   }
   loginUser(){
-    SessionService.clear()
     this.userService.loginUser(this.loginRequest)
       .subscribe({
         next: (auth) => {
-          SessionService.set("ActiveUser", auth.userId)
-          this.sharedService.emitRefreshEvent()
+          this.authState.setFromLogin(auth)
           this.router.navigate(['home'])
         },
         error: (response) => {
