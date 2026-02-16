@@ -19,11 +19,6 @@ export class LoginComponent {
   constructor(private userService: UserService, private router: Router,
               private authState: AuthStateService) { }
   ngOnInit(){
-    this.authState.ensureLoaded().subscribe(user => {
-      if (user != null) {
-        this.router.navigate(['home'])
-      }
-    })
     this.displayMessageBox = false;
   }
   loginUser(){

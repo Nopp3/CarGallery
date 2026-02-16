@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { User } from "../../models/user.model";
+import { Login, User } from "../../models/user.model";
 import {UserService} from "../../services/user/user.service";
 import {Router} from "@angular/router";
+import { AuthStateService } from "../../services/auth-state/auth-state.service";
 
 @Component({
   selector: 'app-signup',
@@ -19,7 +20,8 @@ export class SignupComponent {
   confirmPass = '';
   displayMessageBox = false;
   messageBoxText = "";
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router,
+              private authState: AuthStateService) {}
   ngOnInit(){
     this.displayMessageBox = false;
   }
@@ -28,7 +30,20 @@ export class SignupComponent {
       this.userService.addUser(this.newUser)
         .subscribe({
           next: () => {
-            this.router.navigate(['/login']);
+            const loginRequest: Login = {
+              username: this.newUser.username,
+              password: this.newUser.password
+            };
+            this.userService.loginUser(loginRequest)
+              .subscribe({
+                next: auth => {
+                  this.authState.setFromLogin(auth);
+                  this.router.navigate(['/home']);
+                },
+                error: () => {
+                  this.router.navigate(['/login']);
+                }
+              });
           },
           error: err => {
             this.messageBoxText = err.error;

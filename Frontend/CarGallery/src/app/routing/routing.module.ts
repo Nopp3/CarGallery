@@ -8,6 +8,7 @@ import { SignupComponent } from "../components/signup/signup.component";
 import { PanelComponent } from "../components/panel/panel.component";
 import { authGuard } from "./auth.guard";
 import { adminGuard } from "./admin.guard";
+import { guestGuard } from "./guest.guard";
 
 const routes: Routes = [
   {
@@ -17,11 +18,13 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    canActivate: [guestGuard]
   },
   {
     path: 'signUp',
-    component: SignupComponent
+    component: SignupComponent,
+    canActivate: [guestGuard]
   },
   {
     path: 'home',
