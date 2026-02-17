@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
 using System.Data;
 
 namespace CarGalleryAPI.Data
@@ -7,13 +6,21 @@ namespace CarGalleryAPI.Data
     public static class DbCreator
     {
         private static SqlConnection connection;
-        
+
         private static string dbExistSql = @"SELECT CASE WHEN DB_ID('CarGalleryDB') IS NULL THEN 0 ELSE 1 END";
+
+        private static string _seedAdminUsername = "admin";
+        private static string? _seedAdminEmail = "support@cargallery.com";
+        private static string? _seedAdminPassword;
 
         public static void Initialize(IConfiguration configuration)
         {
             var server = configuration["DatabaseConnection:Server"];
             var useWindowsAuthentication = configuration.GetValue<bool>("DatabaseConnection:useWindowsAuthentication");
+
+            _seedAdminUsername = configuration["SeedAdmin:Username"] ?? _seedAdminUsername;
+            _seedAdminEmail = configuration["SeedAdmin:Email"] ?? _seedAdminEmail;
+            _seedAdminPassword = configuration["SeedAdmin:Password"];
 
             if (useWindowsAuthentication)
                 connection = new SqlConnection($"Server={server};Integrated Security=True;TrustServerCertificate=true;");
@@ -24,6 +31,13 @@ namespace CarGalleryAPI.Data
                 connection = new SqlConnection($"Server={server};User Id={username};Password={password};TrustServerCertificate=true;");
             }
         }
+
+        public static void ValidateSeedAdminConfig()
+        {
+            if (string.IsNullOrWhiteSpace(_seedAdminPassword))
+                throw new InvalidOperationException("SeedAdmin:Password must be set when creating the database. Set it via env var SeedAdmin__Password (or SEED_ADMIN_PASSWORD in .env when using docker compose).");
+        }
+
         public static bool DoesDbExist()
         {
             SqlCommand sqlCommand = new SqlCommand(dbExistSql, connection);
@@ -60,6 +74,11 @@ namespace CarGalleryAPI.Data
 
         private static void AddDataFromExcel()
         {
+            if (string.IsNullOrWhiteSpace(_seedAdminPassword))
+                throw new InvalidOperationException("SeedAdmin:Password must be set when seeding the default admin.");
+
+            var seedAdminPasswordHash = Hash.HashPassword(_seedAdminPassword);
+
             DataSet ds = ExcelReader.ImportFromExcel();
             SqlCommand sqlCommand;
             foreach (DataTable table in ds.Tables)
@@ -85,8 +104,11 @@ namespace CarGalleryAPI.Data
                 sqlCommand = new SqlCommand(sql, connection);
                 sqlCommand.ExecuteNonQuery();
             }
-            sqlCommand = new SqlCommand("INSERT INTO Users (id, role_id, username, email, password) " +
-                "VALUES (NEWID(), 1, 'admin', 'support@cargallery.com', '$2y$12$B/wnoI3zPSj/ENr4HE0WKOtMK3RSoLAosIogNHg3x1i9SRVeaLJEi');", connection);
+
+            sqlCommand = new SqlCommand("INSERT INTO Users (id, role_id, username, email, password) VALUES (NEWID(), 1, @username, @email, @password);", connection);
+            sqlCommand.Parameters.AddWithValue("@username", _seedAdminUsername);
+            sqlCommand.Parameters.AddWithValue("@email", string.IsNullOrWhiteSpace(_seedAdminEmail) ? DBNull.Value : _seedAdminEmail);
+            sqlCommand.Parameters.AddWithValue("@password", seedAdminPasswordHash);
             sqlCommand.ExecuteNonQuery();
         }
     }

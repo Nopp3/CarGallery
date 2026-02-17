@@ -9,7 +9,7 @@ services:
       context: ./Backend/CarGalleryAPI
       dockerfile: Dockerfile
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
       DatabaseConnection__Server: sqlserver,1433
       DatabaseConnection__useWindowsAuthentication: "false"
       DatabaseConnection__Username: sa
@@ -18,6 +18,9 @@ services:
       Jwt__Audience: CarGalleryFrontend
       Jwt__SigningKey: ${JWT_SIGNING_KEY}
       Jwt__AccessTokenMinutes: "60"
+      SeedAdmin__Username: ${SEED_ADMIN_USERNAME}
+      SeedAdmin__Email: ${SEED_ADMIN_EMAIL}
+      SeedAdmin__Password: ${SEED_ADMIN_PASSWORD}
     depends_on:
       - sqlserver
     restart: unless-stopped
@@ -33,7 +36,7 @@ services:
   caddy:
     image: caddy:2-alpine
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:

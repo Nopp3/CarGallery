@@ -21,6 +21,7 @@ namespace CarGalleryAPI
 
             if (!DbCreator.DoesDbExist())
             {
+                DbCreator.ValidateSeedAdminConfig();
                 DbCreator.CreateDatabase();
             }
 
@@ -133,7 +134,7 @@ namespace CarGalleryAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             
             app.UseStatusCodePages(async statusCodeContext =>
             {

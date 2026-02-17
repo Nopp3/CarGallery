@@ -1,88 +1,177 @@
-# Car Gallery Application Documentation
+# CarGallery
 
-Welcome to the **Car Gallery**, a dynamic full-stack application showcasing a seamless fusion of cutting-edge technologies. This project combines the elegance of an Angular frontend, the robustness of an ASP.NET backend, and the scalability of a Microsoft SQL Server database.
+A full-stack hobby application for managing and browsing car listings.
 
 ## Table of Contents
 
 - [Description](#description)
-- [Technologies used](#technologies-used)
+- [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
+- [Architecture](#architecture)
 - [Overview](#overview)
 - [Features](#features)
+- [Security Notes](#security-notes)
+- [Roadmap](#roadmap)
 
 ## Description
 
-The Car Gallery is a web application designed for car enthusiasts to showcase and share their beloved vehicles. Users have the ability to upload photos of their cars along with essential parameters such as engine capacity, model, and brand. The application provides a platform for users to boast about their automotive pride.
+CarGallery is a full-stack app where users can register, log in, add cars (with images), and browse cars posted by others. Admin users can manage reference data (brands / body types) and users.
 
-## Technologies used
+## Tech Stack
 
 Frontend
-- Angular v16
-- Bootstrap v5.3.0
-- Typescript v5.1.6
-- [Font Awesome](https://fontawesome.com/)
+
+- Angular 16
+- Bootstrap 5
+- TypeScript
+- RxJS 7
+- Font Awesome
 
 Backend
-- ASP.NET Core
-- .NET 6.0
-- Entity Framework Core
-- Excel Data Reader
+
+- ASP.NET Core Web API (.NET 6)
+- Entity Framework Core (SQL Server provider)
+- JWT auth (`Microsoft.AspNetCore.Authentication.JwtBearer`)
+- Password hashing with BCrypt
 
 Database
-- Microsoft SQL Server
+
+- SQL Server (Azure SQL Edge in Docker)
+
+Infra
+
+- Docker Compose
+- Caddy (reverse proxy, the only public entrypoint)
+- Nginx (serves the Angular build with SPA fallback)
 
 ## Getting Started
 
-1. Check if you have installed **Node**, **Angular CLI**, **.NET CLI or IDE**, **Microsoft SQL Server**
+### Docker (recommended)
 
-2. Clone this repository to your local machine using:
+Prerequisites: Docker Desktop.
+
+1. Clone:
+
 ```bash
-git clone https://github.com/Noppe420/CarGallery
+git clone https://github.com/Nopp3/CarGallery
+cd CarGallery
 ```
-3. **Backend Setup**:
-- Navigate to the `Backend\CarGalleryAPI` folder and open the Visual Studio project.
-- Configure the MSSQL database connection in the `appsettings.json` (if necessary) default server is `localhost` with windows authentication.
-- Run the backend project to start the API server (the database will be created on startup).
 
-4. **Frontend Setup**:
-- Navigate to the `Frontend\CarGallery` folder.
-- Install the required npm packages using `npm install`.
-- Update the API endpoint URL in the frontend code to match your backend server in the `Frontend\CarGallery\src\app\environment.ts`.
-- Run the frontend project using `ng serve`.
+2. Create `.env`:
 
-The default admin account has both username and password: admin
+```bash
+cp .env.example .env
+```
+
+3. Set secrets in `.env`:
+
+- `MSSQL_SA_PASSWORD`: SQL Server `sa` password for the DB container
+- `JWT_SIGNING_KEY`: JWT signing key for the API (must be at least 32 characters)
+- `SEED_ADMIN_PASSWORD`: password for the seeded admin user (created on first database creation)
+
+Optional:
+
+- `SEED_ADMIN_USERNAME`: username for the seeded admin user (default: `admin`)
+- `SEED_ADMIN_EMAIL`: email for the seeded admin user (default: `support@cargallery.com`)
+
+4. Build and start:
+
+```bash
+docker compose up -d --build
+```
+
+5. Open:
+
+- App: `http://127.0.0.1:8080`
+- Health: `http://127.0.0.1:8080/health` (expected response: `Healthy`)
+
+Reset the database (destructive):
+
+```bash
+docker compose down -v
+```
+
+### Local Development (optional)
+
+Backend (see `Backend/CarGalleryAPI/CarGalleryAPI/Properties/launchSettings.json`):
+
+```bash
+cd Backend/CarGalleryAPI/CarGalleryAPI
+dotnet run
+```
+
+Frontend (proxies `/api` to the backend):
+
+```bash
+cd Frontend/CarGallery
+npm ci
+ng serve --proxy-config proxy.conf.json
+```
+
+Open `http://localhost:4200`.
+
+## Architecture
+
+```
+Browser
+  -> Caddy (exposed on host)
+       /            -> Frontend container (Nginx serves Angular build)
+       /api/*       -> Backend container (ASP.NET Core)
+       /health      -> Backend container
+Backend -> Azure SQL Edge (SQL Server) container
+```
 
 ## Overview
 
 There are 4 main pages:
-- **Log in/Sign up**: This page presents a user-friendly login/signup form. It also displays an error message when the form is incorrectly completed.
-- **Home**: Users can view and manage their uploaded cars on this page. It allows for the editing and deletion of cars, as well as the addition of new ones.
-- **All**: Explore a comprehensive display of all cars uploaded by users. The page includes a convenient filter option to sort cars by brand.
-- **Panel (Administrators Only)**: Exclusively accessible to administrators, this section facilitates the management of car brands, body types, and user profiles. Administrators can efficiently maintain the integrity of the application's data.
 
-<!-- TO BE DONE -->
+- **Log in / Sign up**: authentication and registration (guest-only routes).
+- **Home**: shows the authenticated user's own cars, with add/edit/delete.
+- **All**: shows cars uploaded by all users, with a brand filter.
+- **Panel (Administrators Only)**: admin panel to manage brands, body types, and users.
 
 ## Features
 
-### Database Initialization:
-- The application's backend features automatic database initialization upon the first run along with importing basic data from .xlsx file.
+### Containerized stack
 
-### User Profiles:
-- Users can create accounts, providing a personalized space to manage and showcase their car collection.
-- Their passwords are stored securely thanks to hashing.
+- Full stack runs via Docker Compose.
+- Caddy is the only container exposed to the outside; frontend/backend/DB are internal.
 
-### Car Upload and Management:
-- Upload photos of cars, including relevant parameters, to the server.
-- Edit or delete cars from the user's collection.
-- User-friendly pop-up form for editing and adding cars
+### Authentication and authorization
 
-### Administrative Panel:
-- Administrators have a dedicated panel to manage brands and car body types in the database.
-- Brands and bodies are maintained to ensure data integrity, preventing users from adding non-existent brands.
-- The panel is visible only to administrators
+- Login issues a JWT and stores it in an HttpOnly cookie (`cg_access_token`).
+- The backend enforces:
+  - admin endpoints: roles `HeadAdmin`, `Admin`
+  - car write operations: ownership checks (owner or admin can update/delete)
 
-### Car Exploration:
-- Clicking on a car unveils supplementary information.
-- Brand filtering is available (only if there is a car from that brand).
+### API robustness
 
----
+- `GET /health` endpoint for health checks.
+- Unauthorized and forbidden API responses use `application/problem+json` (ProblemDetails) with a `traceId`.
+
+### Database initialization (current)
+
+- On first run, the API creates `CarGalleryDB` and seeds reference data from:
+  - `Backend/CarGalleryAPI/CarGalleryAPI/Initial.sql`
+  - `Backend/CarGalleryAPI/CarGalleryAPI/CarGalleryDBData.xlsx`
+
+### Car upload and management (current)
+
+- Upload an image and car metadata.
+- Images are currently written to the API container disk (`wwwroot/images`) and served as static files.
+
+## Security Notes
+
+- The frontend does not rely on `sessionStorage` for roles; it uses `GET /api/auth/me` as the source of truth for UI decisions.
+- The API also supports `Authorization: Bearer <token>` for tooling, but browser usage is cookie-based.
+
+## Roadmap
+
+Planned improvements:
+
+- Add minimal integration tests and GitHub Actions CI
+- Upgrade backend to .NET 10 (LTS) and align packages
+- Introduce EF Core migrations as the schema source of truth and implement idempotent seeding
+- Move the Excel import to development-only or a manual admin action
+- Replace disk image storage with Cloudinary signed uploads (stateless API)
+- Migrate from SQL Server to PostgreSQL

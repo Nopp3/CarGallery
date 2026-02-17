@@ -7,6 +7,7 @@ import { AuthStateService } from "./services/auth-state/auth-state.service";
 })
 export class AppComponent {
   title = 'CarGallery';
+  currentYear = new Date().getFullYear();
   constructor(public authState: AuthStateService) {}
   ngOnInit() {
     this.authState.ensureLoaded().subscribe();
