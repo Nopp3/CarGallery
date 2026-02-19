@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CarService } from "../../services/car/car.service";
 import { Brand, CarUI } from "../../models/car.model";
-import { environment } from 'src/app/environment';
 
 @Component({
   selector: 'app-all-cars',
@@ -12,7 +11,6 @@ export class AllCarsComponent {
   constructor(private carService: CarService) {}
 
   cars: CarUI[] = []
-  apiUrl: string = environment.baseApiUrl
   brands: Brand[] = []
   filter: number = 0
 
