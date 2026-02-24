@@ -70,6 +70,22 @@ namespace CarGalleryAPI
             builder.Services.AddMvc();
             builder.Services.AddHealthChecks();
 
+            const string frontendCorsPolicy = "FrontendCors";
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+            if (allowedOrigins.Length == 0)
+                throw new InvalidOperationException("Cors:AllowedOrigins must contain at least one origin.");
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(frontendCorsPolicy, corsBuilder =>
+                {
+                    corsBuilder.WithOrigins(allowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
             builder.Services.Configure<JwtOptions>(jwtSection);
             var jwtOptions = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
@@ -123,9 +139,7 @@ namespace CarGalleryAPI
 
             app.UseStaticFiles();
 
-            app.UseCors(builder => builder.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
+            app.UseCors(frontendCorsPolicy);
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
