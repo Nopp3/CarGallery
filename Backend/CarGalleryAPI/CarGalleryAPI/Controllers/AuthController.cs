@@ -18,11 +18,29 @@ namespace CarGalleryAPI.Controllers
     {
         private readonly DatabaseContext _dbContext;
         private readonly JwtOptions _jwtOptions;
+        private readonly IWebHostEnvironment _environment;
+        private readonly LoginRateLimiter _loginRateLimiter;
 
-        public AuthController(DatabaseContext dbContext, IOptions<JwtOptions> jwtOptions)
+        public AuthController(DatabaseContext dbContext, IOptions<JwtOptions> jwtOptions,
+            IWebHostEnvironment environment, LoginRateLimiter loginRateLimiter)
         {
             _dbContext = dbContext;
             _jwtOptions = jwtOptions.Value;
+            _environment = environment;
+            _loginRateLimiter = loginRateLimiter;
+        }
+
+        private CookieOptions BuildAuthCookieOptions(DateTime? expiresAtUtc = null)
+        {
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = !_environment.IsDevelopment(),
+                SameSite = SameSiteMode.Lax,
+                Expires = expiresAtUtc,
+                Path = "/",
+                IsEssential = true
+            };
         }
 
         [HttpPost("login")]
@@ -31,12 +49,23 @@ namespace CarGalleryAPI.Controllers
             if (loginRequest == null)
                 return BadRequest();
 
+            if (_loginRateLimiter.IsBlocked(loginRequest.username))
+                return StatusCode(StatusCodes.Status429TooManyRequests, "Too many failed login attempts. Try again later.");
+
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.username == loginRequest.username);
             if (user == null)
+            {
+                _loginRateLimiter.RegisterFailure(loginRequest.username);
                 return Unauthorized();
+            }
 
             if (!Hash.VerifyPassword(loginRequest.password, user.password))
+            {
+                _loginRateLimiter.RegisterFailure(loginRequest.username);
                 return Unauthorized();
+            }
+
+            _loginRateLimiter.Reset(loginRequest.username);
 
             var now = DateTime.UtcNow;
             var expiresAtUtc = now.AddMinutes(_jwtOptions.AccessTokenMinutes);
@@ -64,15 +93,7 @@ namespace CarGalleryAPI.Controllers
                 signingCredentials: creds);
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-            Response.Cookies.Append(JwtOptions.AccessTokenCookieName, accessToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = HttpContext.Request.IsHttps,
-                SameSite = SameSiteMode.Lax,
-                Expires = expiresAtUtc,
-                Path = "/",
-                IsEssential = true
-            });
+            Response.Cookies.Append(JwtOptions.AccessTokenCookieName, accessToken, BuildAuthCookieOptions(expiresAtUtc));
 
             return Ok(new AuthResponse
             {
@@ -88,14 +109,7 @@ namespace CarGalleryAPI.Controllers
         [HttpPost("logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete(JwtOptions.AccessTokenCookieName, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = HttpContext.Request.IsHttps,
-                SameSite = SameSiteMode.Lax,
-                Path = "/",
-                IsEssential = true
-            });
+            Response.Cookies.Delete(JwtOptions.AccessTokenCookieName, BuildAuthCookieOptions());
             return Ok();
         }
 

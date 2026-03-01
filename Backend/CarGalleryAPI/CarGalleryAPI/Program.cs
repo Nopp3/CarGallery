@@ -69,6 +69,8 @@ namespace CarGalleryAPI
 
             builder.Services.AddMvc();
             builder.Services.AddHealthChecks();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddSingleton<LoginRateLimiter>();
 
             const string frontendCorsPolicy = "FrontendCors";
             var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
