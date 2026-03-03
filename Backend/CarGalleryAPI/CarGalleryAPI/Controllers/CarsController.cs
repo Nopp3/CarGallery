@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace CarGalleryAPI.Controllers
 {
@@ -14,12 +15,16 @@ namespace CarGalleryAPI.Controllers
     [Route("api/[controller]")]
     public class CarsController : Controller
     {
+        private static readonly string[] AllowedImageExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        private static readonly string[] AllowedImageContentTypes = new[] { "image/jpeg", "image/png", "image/webp" };
         private readonly DatabaseContext _dbContext;
         private readonly IWebHostEnvironment _env;
-        public CarsController(DatabaseContext dbContext, IWebHostEnvironment env)
+        private readonly IConfiguration _configuration;
+        public CarsController(DatabaseContext dbContext, IWebHostEnvironment env, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _env = env;
+            _configuration = configuration;
         }
 
         private bool TryGetAuthenticatedUserId(out Guid userId)
@@ -32,6 +37,29 @@ namespace CarGalleryAPI.Controllers
         private bool IsAdmin()
         {
             return User.IsInRole(Roles.HeadAdmin.ToString()) || User.IsInRole(Roles.Admin.ToString());
+        }
+
+        private long GetMaxImageBytes()
+        {
+            return _configuration.GetValue<long?>("Uploads:MaxImageBytes") ?? 5 * 1024 * 1024;
+        }
+
+        private string? ValidateImage(IFormFile? file, bool required)
+        {
+            if (file == null || file.Length == 0)
+                return required ? "Image file is required." : null;
+
+            if (file.Length > GetMaxImageBytes())
+                return $"Image file is too large. Maximum size is {GetMaxImageBytes() / (1024 * 1024)} MB.";
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!AllowedImageExtensions.Contains(extension))
+                return "Unsupported image extension. Allowed: .jpg, .jpeg, .png, .webp.";
+
+            if (!AllowedImageContentTypes.Contains(file.ContentType.ToLowerInvariant()))
+                return "Unsupported image content type. Allowed: image/jpeg, image/png, image/webp.";
+
+            return null;
         }
 
         [HttpGet("all")]
@@ -193,8 +221,9 @@ namespace CarGalleryAPI.Controllers
 
             //Upload File
             var file = formCollection.Files.GetFile("image");
-            if (file == null || file.Length == 0)
-                return BadRequest("TEST");
+            var validationError = ValidateImage(file, required: true);
+            if (validationError != null)
+                return BadRequest(validationError);
 
             string uniqueImgName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
             string imagePath = Path.Combine(_env.WebRootPath, "images", uniqueImgName);
@@ -232,6 +261,10 @@ namespace CarGalleryAPI.Controllers
             var file = formCollection.Files.GetFile("image");
             if (file != null && file.Length != 0)
             {
+                var validationError = ValidateImage(file, required: false);
+                if (validationError != null)
+                    return BadRequest(validationError);
+
                 string uniqueImgName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
                 string imagePath = Path.Combine(_env.WebRootPath, "images", uniqueImgName);
 
