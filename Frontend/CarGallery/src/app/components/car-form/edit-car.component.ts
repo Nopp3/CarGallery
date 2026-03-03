@@ -9,6 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
   styleUrls: ['./car-form.component.css']
 })
 export class EditCarComponent {
+  private readonly maxImageBytes = 5 * 1024 * 1024
   title: string = 'Edit Car'
   carRequest: Car = {
     id: '00000000-0000-0000-0000-000000000000',
@@ -69,7 +70,7 @@ export class EditCarComponent {
           },
           error: err => {
             this.displayMessageBox = true
-            this.messageBoxText = err.message
+            this.messageBoxText = this.getUploadErrorMessage(err)
           }
         })
     }
@@ -78,6 +79,33 @@ export class EditCarComponent {
     return new Date().getFullYear()
   }
   fileSelected(event: any){
-    this.fileRequest = event.target.files[0]
+    const file = event.target.files[0]
+    if (!file){
+      this.fileRequest = null
+      return
+    }
+
+    if (file.size > this.maxImageBytes){
+      this.fileRequest = null
+      event.target.value = ''
+      this.displayMessageBox = true
+      this.messageBoxText = 'Image file is too large. Maximum size is 5 MB.'
+      return
+    }
+
+    this.displayMessageBox = false
+    this.fileRequest = file
+  }
+
+  private getUploadErrorMessage(err: any): string {
+    if (err?.status === 413){
+      return 'Image file is too large. Maximum size is 5 MB.'
+    }
+
+    if (err?.status === 0){
+      return 'Upload was interrupted or rejected before the API could process it.'
+    }
+
+    return err?.error ?? err?.message ?? 'Upload failed.'
   }
 }
