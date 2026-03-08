@@ -2,6 +2,9 @@
 
 A full-stack hobby application for managing and browsing car listings.
 
+Live demo: [https://cargallery.rrytelk.com](https://cargallery.rrytelk.com)  
+The demo is hosted on personal infrastructure and may occasionally be unavailable.
+
 ## Table of Contents
 
 - [Description](#description)
@@ -15,7 +18,7 @@ A full-stack hobby application for managing and browsing car listings.
 
 ## Description
 
-CarGallery is a full-stack app where users can register, log in, add cars (with images), and browse cars posted by others. Admin users can manage reference data (brands / body types) and users.
+CarGallery is a full-stack app where users can register, log in, add cars (with images), and browse cars posted by others. Admin users can manage reference data (brands / body types) and view the users list.
 
 ## Tech Stack
 
@@ -117,6 +120,7 @@ Browser
   -> Caddy (exposed on host)
        /            -> Frontend container (Nginx serves Angular build)
        /api/*       -> Backend container (ASP.NET Core)
+       /images/*    -> Backend container (static uploaded images)
        /health      -> Backend container
 Backend -> Azure SQL Edge (SQL Server) container
 ```
@@ -128,7 +132,7 @@ There are 4 main pages:
 - **Log in / Sign up**: authentication and registration (guest-only routes).
 - **Home**: shows the authenticated user's own cars, with add/edit/delete.
 - **All**: shows cars uploaded by all users, with a brand filter.
-- **Panel (Administrators Only)**: admin panel to manage brands, body types, and users.
+- **Panel (Administrators Only)**: admin panel to manage brands and body types, and view users.
 
 ## Features
 
@@ -143,6 +147,7 @@ There are 4 main pages:
 - The backend enforces:
   - admin endpoints: roles `HeadAdmin`, `Admin`
   - car write operations: ownership checks (owner or admin can update/delete)
+  - login endpoint: basic rate limiting after repeated failed attempts
 
 ### API robustness
 
@@ -159,11 +164,14 @@ There are 4 main pages:
 
 - Upload an image and car metadata.
 - Images are currently written to the API container disk (`wwwroot/images`) and served as static files.
+- The API accepts `.jpg`, `.jpeg`, `.png`, and `.webp` files up to `5 MB`.
 
 ## Security Notes
 
 - The frontend does not rely on `sessionStorage` for roles; it uses `GET /api/auth/me` as the source of truth for UI decisions.
 - The API also supports `Authorization: Bearer <token>` for tooling, but browser usage is cookie-based.
+- CORS is restricted to the production frontend origin and explicit local development origins.
+- In non-development environments, the auth cookie is marked `Secure`, so browsers only send it over HTTPS.
 
 ## Roadmap
 
