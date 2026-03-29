@@ -1,12 +1,11 @@
 using CarGalleryAPI.Auth;
 using CarGalleryAPI.Controllers;
 using CarGalleryAPI.Data;
-using Microsoft.AspNetCore.Hosting;
+using CarGalleryAPI.Tests.TestSupport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Xunit;
@@ -94,16 +93,6 @@ namespace CarGalleryAPI.Tests.Auth
             };
 
             return controller;
-        }
-
-        private class TestWebHostEnvironment : IWebHostEnvironment
-        {
-            public string EnvironmentName { get; set; } = "Development";
-            public string ApplicationName { get; set; } = "CarGalleryAPI.Tests";
-            public string WebRootPath { get; set; } = string.Empty;
-            public IFileProvider WebRootFileProvider { get; set; } = new NullFileProvider();
-            public string ContentRootPath { get; set; } = string.Empty;
-            public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
         }
     }
 }
