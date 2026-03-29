@@ -2,7 +2,7 @@
 
 A full-stack hobby application for managing and browsing car listings.
 
-Live demo: [https://cargallery.rrytelk.com](https://cargallery.rrytelk.com)  
+Live demo: [https://cargallery.rrytelk.com](https://cargallery.rrytelk.com)
 The demo is hosted on personal infrastructure and may occasionally be unavailable.
 
 ## Table of Contents
@@ -13,6 +13,7 @@ The demo is hosted on personal infrastructure and may occasionally be unavailabl
 - [Architecture](#architecture)
 - [Overview](#overview)
 - [Features](#features)
+- [Testing and CI](#testing-and-ci)
 - [Security Notes](#security-notes)
 - [Roadmap](#roadmap)
 
@@ -166,6 +167,23 @@ There are 4 main pages:
 - Images are currently written to the API container disk (`wwwroot/images`) and served as static files.
 - The API accepts `.jpg`, `.jpeg`, `.png`, and `.webp` files up to `5 MB`.
 
+## Testing and CI
+
+Backend unit tests live in:
+
+- `Backend/CarGalleryAPI/CarGalleryAPI.Tests`
+
+Run locally:
+
+```bash
+dotnet test Backend/CarGalleryAPI/CarGalleryAPI.Tests/CarGalleryAPI.Tests.csproj
+```
+
+GitHub Actions:
+
+- Workflow file: `.github/workflows/backend-tests.yml`
+- Runs on every `push` and `pull_request` (restore, build, and backend test run).
+
 ## Security Notes
 
 - The frontend does not rely on `sessionStorage` for roles; it uses `GET /api/auth/me` as the source of truth for UI decisions.
@@ -177,7 +195,6 @@ There are 4 main pages:
 
 Planned improvements:
 
-- Add minimal integration tests and GitHub Actions CI
 - Upgrade backend to .NET 10 (LTS) and align packages
 - Introduce EF Core migrations as the schema source of truth and implement idempotent seeding
 - Move the Excel import to development-only or a manual admin action
